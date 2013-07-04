@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical" >
+
+<LinearLayout 
+               android:id="@+id/load_screenshot_parent"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal"
+               android:layout_gravity="center|center_horizontal">
+
+	           <ProgressBar
+	               android:id="@+id/progressBar_screenshot"
+	               style="?android:attr/progressBarStyleLarge"
+	     	       android:layout_width="0dp"
+	               android:layout_height="wrap_content"
+	               android:layout_weight="1"
+	               android:layout_gravity="center|center_horizontal" />
+	           
+	           <TextView 
+                    android:layout_width="wrap_content"
+               		android:layout_height="wrap_content"
+               		android:text="Loading workshops, Please wait"
+               		android:layout_gravity="center|center_horizontal"/>
+           
+           </LinearLayout>
+
+<ListView
+android:id="@+id/workshop_list"
+android:layout_width="match_parent"
+android:layout_height="match_parent"  >
+</ListView>
+</RelativeLayout>
