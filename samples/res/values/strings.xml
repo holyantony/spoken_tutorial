@@ -31,4 +31,11 @@
     </string>
 
     <string name="sample_static">This sample shows how to attach a drawer that is always visible.</string>
+    
+    <string name="msg_content">
+        Hello,\n
+        I would like you to conduct workshop in our college.\n
+        Please reply me with necessary details.\n
+        Thank you.\n
+        </string>
 </resources>

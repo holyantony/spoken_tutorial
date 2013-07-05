@@ -130,7 +130,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 	
 	
-	// Getting All contacts
+		// Getting All contacts
 		public List<Contacts> getAllContacts() {
 			List<Contacts> conatctList = new ArrayList<Contacts>();
 			// Select All Query
@@ -156,5 +156,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			// return event list
 			return conatctList;
 		}
+		
+		// Getting contact detail of particular state 
+			public ArrayList<String> getContactForState(String string) {
+				ArrayList<String> conatctList = new ArrayList<String>();
+				
+				// Select All Query
+				String selectQuery = "SELECT * FROM " + TABLE_CONTACTS + " where state like '%"+string+"%';";
+				
+				SQLiteDatabase db = this.getWritableDatabase();
+				Cursor cursor = db.rawQuery(selectQuery, null);
+				System.out.println("CURSOR LENGTH IS "+selectQuery);
+				// looping through all rows and adding to list
+				if (cursor.moveToFirst()) {
+					// Adding event to list
+					
+					for (int i = 1; i < 5; i++) {
+						conatctList.add(cursor.getString(i));
+					}
+				}
+				System.out.println("list is"+conatctList);
+				// return event list
+				return conatctList;
+			}
 
 }
