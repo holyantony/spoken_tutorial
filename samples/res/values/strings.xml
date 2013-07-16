@@ -38,4 +38,6 @@
         Please reply me with necessary details.\n
         Thank you.\n
         </string>
-</resources>
+    <string name="query1">SELECT wr.cfm_wkshop_date, wr.foss_category, ac.id, ac.institution_name, ac.state_code, ac.city FROM workshop_requests wr, academic_center ac WHERE wr.cfm_wkshop_date > \'\".DATE("Y-m-d").\"\' and wr.status=1 and ac.academic_code=wr.academic_code ORDER BY wr.cfm_wkshop_date, wr.cfm_wkshop_time ASC</string>
+    <string name="query2"></string>
+    </resources>

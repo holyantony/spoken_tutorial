@@ -7,10 +7,13 @@ import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,25 +42,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-
 import workshops.database.handler.*;;
-
-
-
 
 public class ContentSample extends Activity implements OnClickListener{
 
@@ -72,7 +80,7 @@ public class ContentSample extends Activity implements OnClickListener{
 	private int mActivePosition = -1;
 	private String mContentText;
 	private TextView mContentTextView;
-
+	ArrayList<NameValuePair> MYpostParameters;
 	static View window_layout;
 
 	String res;
@@ -95,6 +103,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		mMenuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
 
 		List<Object> items = new ArrayList<Object>();
+		//items.add(new Category("About"));
 		items.add(new Item("Workshops", R.drawable.ic_action_refresh_dark));
 		items.add(new Item("Contacts for workshop", R.drawable.ic_action_select_all_dark));
 		items.add(new Category("Events"));
@@ -130,23 +139,82 @@ public class ContentSample extends Activity implements OnClickListener{
 				return v instanceof SeekBar;
 			}
 		});
+
+
 	}
+
+	private void getResponseFromServer(String string) {
+		// query db
+		List<String> eventList = db.getAllEvents();
+
+		if(eventList.size() != 0){
+			try {
+				System.out.println("ENTRIES AVAILABLE IN DATABASE");
+				if(mActivePosition == 0){
+					displayEvents(eventList);
+				}
+			} catch (Exception e) {
+				System.out.println("EXCEPTION: "+e.getMessage().toString());
+			}
+
+		}else{
+			System.out.println("NO ENTRIES IN DATABASE");
+			// if internet is ON
+			if (isInternetOn()) {
+				System.out.println("INTERNET ON");
+				new GetHttpResponseAsync().execute(string);
+
+			}else{
+				System.out.println("INTERNET OFF");
+			}
+		}
+	}
+
+	private final boolean isInternetOn() {
+		// check internet connection via wifi  
+		ConnectivityManager connec =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		if( connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED ||
+				connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTING ||
+				connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ||
+				connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ) {
+			//Toast.makeText(this, connectionType + ” connected”, Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		else if( connec.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED || 
+				connec.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED  ) {
+			//System.out.println(“Not Connected”);
+			return false;
+		}
+		return false;
+	}
+
 
 	private AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
+			MYpostParameters = new ArrayList<NameValuePair>();
+			
 
 			mActivePosition = position;
 			if(position == 0){
 				mMenuDrawer.setContentView(R.layout.workshop_list);
 				window_layout = (View) mMenuDrawer.getParent();
-				new DownloadFileAsync().execute("http://www.spoken-tutorial.org/");
+				MYpostParameters.removeAll(MYpostParameters);
+				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query1)));
+				
+				/*
+				 * get the http response from server
+				 */
+				getResponseFromServer("http://10.118.248.44/xampp/check.php");
 
 			}else if(position == 1){
 				mMenuDrawer.setContentView(R.layout.contact);
 				window_layout = (View) mMenuDrawer.getParent();
+				
+				MYpostParameters.removeAll(MYpostParameters);
+				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query2)));
+				new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
 
 				final ImageView india = (ImageView)window_layout.findViewById(R.id.imageButton1);
 				india.setOnTouchListener(new OnTouchListener() {
@@ -211,6 +279,8 @@ public class ContentSample extends Activity implements OnClickListener{
 
 
 	};
+
+
 
 
 	@Override
@@ -415,12 +485,116 @@ public class ContentSample extends Activity implements OnClickListener{
 		}
 	}
 
+	/** The time it takes for our client to timeout */
+	public static final int HTTP_TIMEOUT = 30 * 1000; // milliseconds
+
+	/** Single instance of our HttpClient */
+	private static HttpClient mHttpClient;
+
+	/**
+	 * Get our single instance of our HttpClient object.
+	 *
+	 * @return an HttpClient object with connection parameters set
+	 */
+	private static HttpClient getHttpClient() {
+		if (mHttpClient == null) {
+			mHttpClient = new DefaultHttpClient();
+			final HttpParams params = mHttpClient.getParams();
+			HttpConnectionParams.setConnectionTimeout(params, HTTP_TIMEOUT);
+			HttpConnectionParams.setSoTimeout(params, HTTP_TIMEOUT);
+			ConnManagerParams.setTimeout(params, HTTP_TIMEOUT);
+		}
+		return mHttpClient;
+	}
+
 	// DOWNLOAD ??
-			public class DownloadFileAsync extends AsyncTask<String, String, String> {
+	public class GetHttpResponseAsync extends AsyncTask<String, String, String> {
 		/**
 		 * download tar.gz from URL and write in destination mnt/sdcard or mnt/extsd
 		 **/
-		 String result = "";
+		String result = "";
+		@Override        	
+		public void onPreExecute() {
+			super.onPreExecute();
+		}
+
+
+		public String doInBackground(String... aurl) {
+
+			try {
+				HttpClient client = getHttpClient();
+				HttpPost request = new HttpPost(aurl[0]);
+				UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(MYpostParameters);
+				request.setEntity(formEntity);
+				HttpResponse response = client.execute(request);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+				String line = null;
+				while ((line = reader.readLine()) != null){
+					result += line + "\n";
+				}
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		public void onProgressUpdate(String... progress) {
+			//mProgressDialog.setProgress(Integer.parseInt(progress[0]));
+
+		}
+
+		public void onPostExecute(String unused) {
+			System.out.println("RESULT is"+result);
+			if(mActivePosition == 0){
+				saveEventsInDatabaseAndDislpay(result);
+			}
+
+		}
+
+
+	}
+	private void saveEventsInDatabaseAndDislpay(String result) {
+		//String[] Events = StringUtils.substringsBetween(result,"{([","])}");     
+		//System.out.println("Events"+Events[0]);
+		String[] event_row = StringUtils.substringsBetween(result,"[","]");            
+		for(int i=0;i<event_row.length;i++){
+			db.addEvent(new Event(event_row[i], "001"));
+			db.close();
+		}
+		List<String> eventList = Arrays.asList(event_row);  
+		displayEvents(eventList);
+
+	}
+
+	private void displayEvents(List<String> event_row) {
+		ListView messages_list = (ListView) window_layout.findViewById(R.id.workshop_list);
+		SimpleAdapter adapter; 
+
+		String[] from = new String[] {"rowid", "col_1"};
+		int[] to = new int[] { R.id.message_tv, R.id.time_tv};
+
+		List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
+
+		for(int i = 0; i < event_row.size(); i++){
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("rowid", "" + event_row.get(i));
+			//map.put("col_1", "" + lastmessage[i]);
+			fillMaps.add(map);
+		}
+
+		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.list_row, from, to);
+		messages_list.setAdapter(adapter);
+
+		LinearLayout parent = (LinearLayout) window_layout.findViewById(R.id.load_screenshot_parent);
+		parent.setVisibility(View.GONE);
+		
+	}
+	
+	// DOWNLOAD ??
+	public class DownloadContactAsync extends AsyncTask<String, String, String> {
+		String result = "";
 
 		@Override        	
 		public void onPreExecute() {
@@ -437,8 +611,6 @@ public class ContentSample extends Activity implements OnClickListener{
 
 				HttpResponse response = httpClient.execute(httpGet, localContext);
 
-
-
 				BufferedReader reader = new BufferedReader(
 						new InputStreamReader(
 								response.getEntity().getContent()
@@ -449,7 +621,6 @@ public class ContentSample extends Activity implements OnClickListener{
 				String line = null;
 				while ((line = reader.readLine()) != null){
 					result += line + "\n";
-
 
 				}
 
@@ -467,143 +638,45 @@ public class ContentSample extends Activity implements OnClickListener{
 		}
 
 		public void onPostExecute(String unused) {
-			//mProgressDialog.dismiss();
-			try {		
+			try {
 				//Toast.makeText(ContentSample.this,result,Toast.LENGTH_LONG).show();
-				new DownloadContactAsync().execute("http://process.spoken-tutorial.org/index.php/Software-Training#Contacts_For_Workshops");
+				String[] contacts_table = StringUtils.substringsBetween(result,"<table border=","</table>");      
+				String[] contact_row = StringUtils.substringsBetween(contacts_table[1],"<tr>","</tr>");            
+				//TextView messages = (TextView) window_layout.findViewById(R.id.textView1);
 
-				names = StringUtils.substringsBetween(result,"<p><a href=","</p>");
 
-				//save event in database
-				DatabaseHandler db = new DatabaseHandler(ContentSample.this);
+				//save contact details in database 
+				for (int i = 0; i < contact_row.length; i++) {
+					String[] td = StringUtils.substringsBetween(contact_row[i],"<td","</td>");
+					String state = td[1].substring(1);
+					String person_name = StringUtils.substringBetween(td[2],"<b>","</b>");
+					String email = td[3].substring(1);
+					String phone;
+					if(i == contact_row.length-1){
+						phone = StringUtils.substringBetween(td[4],">","<p>").substring(1);
+					}else{
+						phone = td[4].substring(1);
+					}
 
-				for(int i=0;i<names.length;i++){
-					String event = StringUtils.substringBetween(names[i], "'>","</a>");
 
-					db.addEvent(new Event(event, "001"));
+					db.addContactPerson(new Contacts(state, person_name,email,phone));
 					db.close();
 				}
 
-				matchHTMLTags(result);
+
 			} catch (Exception e) {
-				System.out.println("ERROR 1"+e.getMessage().toString());
+				System.out.println("ERROR 2"+e.getMessage().toString());
 				Toast.makeText(ContentSample.this,"Error: "+e.getMessage().toString()
 						+"\nPlease check internet connection",Toast.LENGTH_LONG).show();
 			}
 		}
+	}
 
 
-		private void matchHTMLTags(String result) {
-			ListView messages_list = (ListView) window_layout.findViewById(R.id.workshop_list);
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
 
-			SimpleAdapter adapter; 
-
-			String[] from = new String[] {"rowid", "col_1"};
-			int[] to = new int[] { R.id.message_tv, R.id.time_tv};
-
-			List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
-
-			for(int i = 0; i < names.length; i++){
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("rowid", "" + StringUtils.substringBetween(names[i], "'>","</a>"));
-				//map.put("col_1", "" + lastmessage[i]);
-				fillMaps.add(map);
-			}
-
-			adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.list_row, from, to);
-			messages_list.setAdapter(adapter);
-
-			LinearLayout parent = (LinearLayout) window_layout.findViewById(R.id.load_screenshot_parent);
-			parent.setVisibility(View.GONE);
-		}
-			}
-
-
-			// DOWNLOAD ??
-			public class DownloadContactAsync extends AsyncTask<String, String, String> {
-				String result = "";
-
-				@Override        	
-				public void onPreExecute() {
-					super.onPreExecute();
-				}
-
-				public String doInBackground(String... aurl) {
-					int count;
-
-					try {
-						HttpClient httpClient = new DefaultHttpClient();
-						HttpContext localContext = new BasicHttpContext();
-						HttpGet httpGet = new HttpGet(aurl[0]);
-
-						HttpResponse response = httpClient.execute(httpGet, localContext);
-
-						BufferedReader reader = new BufferedReader(
-								new InputStreamReader(
-										response.getEntity().getContent()
-										)
-								);
-
-
-						String line = null;
-						while ((line = reader.readLine()) != null){
-							result += line + "\n";
-
-						}
-
-					} catch (Exception e) {
-						System.out.println("error is "+ e.getMessage());
-					}
-
-					return null;
-
-				}
-
-				public void onProgressUpdate(String... progress) {
-					//mProgressDialog.setProgress(Integer.parseInt(progress[0]));
-
-				}
-
-				public void onPostExecute(String unused) {
-					try {
-						//Toast.makeText(ContentSample.this,result,Toast.LENGTH_LONG).show();
-						String[] contacts_table = StringUtils.substringsBetween(result,"<table border=","</table>");      
-						String[] contact_row = StringUtils.substringsBetween(contacts_table[1],"<tr>","</tr>");            
-						//TextView messages = (TextView) window_layout.findViewById(R.id.textView1);
-
-
-						//save contact details in database 
-						for (int i = 0; i < contact_row.length; i++) {
-							String[] td = StringUtils.substringsBetween(contact_row[i],"<td","</td>");
-							String state = td[1].substring(1);
-							String person_name = StringUtils.substringBetween(td[2],"<b>","</b>");
-							String email = td[3].substring(1);
-							String phone;
-							if(i == contact_row.length-1){
-								phone = StringUtils.substringBetween(td[4],">","<p>").substring(1);
-							}else{
-								phone = td[4].substring(1);
-							}
-
-
-							db.addContactPerson(new Contacts(state, person_name,email,phone));
-							db.close();
-						}
-
-
-					} catch (Exception e) {
-						System.out.println("ERROR 2"+e.getMessage().toString());
-						Toast.makeText(ContentSample.this,"Error: "+e.getMessage().toString()
-								+"\nPlease check internet connection",Toast.LENGTH_LONG).show();
-					}
-				}
-			}
-
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
-			}
+	}
 
 }

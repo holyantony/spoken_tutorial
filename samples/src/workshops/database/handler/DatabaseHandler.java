@@ -105,8 +105,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	
 	// Getting All events
-	public List<Event> getAllEvents() {
-		List<Event> eventList = new ArrayList<Event>();
+	public List<String> getAllEvents() {
+		List<String> eventList = new ArrayList<String>();
 		// Select All Query
 		String selectQuery = "SELECT  * FROM " + TABLE_EVENTS;
 
@@ -116,12 +116,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
 			do {
-				Event event = new Event();
-				event.setID(Integer.parseInt(cursor.getString(0)));
-				event.setName(cursor.getString(1));
-				event.setPhoneNumber(cursor.getString(2));
+//				ArrayList<String> event = new ArrayList<String>();
+//				event.add(cursor.getString(0));
+				eventList.add(cursor.getString(1).toString());
+				//event.add(cursor.getString(2));
 				// Adding event to list
-				eventList.add(event);
+				//eventList.add(event);
 			} while (cursor.moveToNext());
 		}
 
