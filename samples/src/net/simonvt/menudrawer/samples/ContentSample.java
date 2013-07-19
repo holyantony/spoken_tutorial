@@ -12,13 +12,17 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -144,9 +148,15 @@ public class ContentSample extends Activity implements OnClickListener{
 	}
 
 	private void getResponseFromServer(String string) {
-		// query db
-		List<String> eventList = db.getAllEvents();
-
+		List<String> eventList = null;
+		if(mActivePosition == 0){
+			// query db
+			eventList = db.getAllEvents();
+		}
+		else if(mActivePosition == 1){
+			// query db
+			eventList = db.getAllContacts();
+		}
 		if(eventList.size() != 0){
 			try {
 				System.out.println("ENTRIES AVAILABLE IN DATABASE");
@@ -166,6 +176,7 @@ public class ContentSample extends Activity implements OnClickListener{
 
 			}else{
 				System.out.println("INTERNET OFF");
+				
 			}
 		}
 	}
@@ -194,7 +205,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 			MYpostParameters = new ArrayList<NameValuePair>();
-			
+
 
 			mActivePosition = position;
 			if(position == 0){
@@ -202,7 +213,8 @@ public class ContentSample extends Activity implements OnClickListener{
 				window_layout = (View) mMenuDrawer.getParent();
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query1)));
-				
+				MYpostParameters.add(new BasicNameValuePair("query_no","1"));
+
 				/*
 				 * get the http response from server
 				 */
@@ -211,77 +223,109 @@ public class ContentSample extends Activity implements OnClickListener{
 			}else if(position == 1){
 				mMenuDrawer.setContentView(R.layout.contact);
 				window_layout = (View) mMenuDrawer.getParent();
-				
+
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query2)));
-				new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
-
+				MYpostParameters.add(new BasicNameValuePair("query_no","2"));
+				/*
+				 * get the http response from server
+				 */
+				getResponseFromServer("http://10.118.248.44/xampp/check.php");
 				final ImageView india = (ImageView)window_layout.findViewById(R.id.imageButton1);
+				final Bitmap bitmap = ((BitmapDrawable)india.getDrawable()).getBitmap();
 				india.setOnTouchListener(new OnTouchListener() {
 
 					public boolean onTouch(View v, MotionEvent event) {
-
 						final int evX = (int) event.getX();
 						final int evY = (int) event.getY();
-						Toast.makeText(ContentSample.this, "touch"+evX+"  "+evY, Toast.LENGTH_SHORT).show();
-
-						if(evX >= 200 && evX <= 260 && evY >= 600 && evY <= 700){
+						Toast.makeText(ContentSample.this, "touched"+evX+"  "+evY, Toast.LENGTH_SHORT).show();
+						System.out.println("created");
+						india.setDrawingCacheEnabled(false);
+						String pixel = Integer.toHexString(bitmap.getPixel(evX, evY));
+						System.out.println("PIXEL"+pixel);
+						
+						if(pixel.equalsIgnoreCase("ffe4ce16")){
 							Toast.makeText(ContentSample.this, "Tamil Nadu touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Tamil Nadu");
-						}else if(evX <= 200 && evX >= 150 && evY >= 630 && evY <= 690){
+						}if(pixel.equalsIgnoreCase("ff8056f8")){
 							Toast.makeText(ContentSample.this, "kerala touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Kerala");
-						}else if(evX >= 140 && evX <= 220 && evY >= 480 && evY <= 610){
+						}if(pixel.equalsIgnoreCase("ff25ec9b")){
 							Toast.makeText(ContentSample.this, "karnataka touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Karnataka");
-						}else if(evX >= 225 && evX <= 320 && evY >= 450 && evY <= 565){
+						}if(pixel.equalsIgnoreCase("fff58dfe")){
 							Toast.makeText(ContentSample.this, "andra pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Andhra Pradesh");
-						}else if(evX >= 120 && evX <= 280 && evY >= 400 && evY <= 492){
+						}if(pixel.equalsIgnoreCase("fffccb02")){
 							Toast.makeText(ContentSample.this, "maharashtra touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Maharashtra");
-						}else if(evX >= 335 && evX <= 425 && evY >= 385 && evY <= 445){
+						}if(pixel.equalsIgnoreCase("ffd37059")){
 							Toast.makeText(ContentSample.this, "orissa touched", Toast.LENGTH_SHORT).show();
-							build_dialog("Odisha");
-						}else if(evX >= 300 && evX <= 350 && evY >= 346 && evY <= 460){
+							build_dialog("Orissa");
+						}if(pixel.equalsIgnoreCase("ff2682ff")){
 							Toast.makeText(ContentSample.this, "chhattiagarth touched", Toast.LENGTH_SHORT).show();
-							build_dialog("Chhattisgarh,");
-						}else if(evX >= 160 && evX <= 315 && evY >= 285 && evY <= 373){
+							build_dialog("Chattisgarh");
+						}if(pixel.equalsIgnoreCase("ff16b002")){
 							Toast.makeText(ContentSample.this, "madhyapradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Madhya Pradesh");
-						}else if(evX >= 115 && evX <= 137 && evY >= 525 && evY <= 542){
+						}if(pixel.equalsIgnoreCase("ffa853f7")){
 							Toast.makeText(ContentSample.this, "goa touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Goa");
+						}if(pixel.equalsIgnoreCase("ffd7ea05")){
+							Toast.makeText(ContentSample.this, "Jharkhand touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Jharkhand");
+						}if(pixel.equalsIgnoreCase("ffff600c")){
+							Toast.makeText(ContentSample.this, "Rajasthan touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Rajasthan");
+						}if(pixel.equalsIgnoreCase("fffcff00")){
+							Toast.makeText(ContentSample.this, "Uttar Pradesh touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Uttar Pradesh");
+						}if(pixel.equalsIgnoreCase("ff62e6ff")){
+							Toast.makeText(ContentSample.this, "Gujarat touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Gujarat");
+						}if(pixel.equalsIgnoreCase("ffebc5de")){
+							Toast.makeText(ContentSample.this, "Bihar touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Bihar");
+						}if(pixel.equalsIgnoreCase("fff8de01")){
+							Toast.makeText(ContentSample.this, "Jammu Kashmir touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Jammu Kashmir");
+						}if(pixel.equalsIgnoreCase("ff794df8")){
+							Toast.makeText(ContentSample.this, "Himachal Pradesh touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Himachal Pradesh");
+						}if(pixel.equalsIgnoreCase("ffb12816")){
+							Toast.makeText(ContentSample.this, "Uttarakhand touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Uttarakhand");
+						}if(pixel.equalsIgnoreCase("fffdf9ba")){
+							Toast.makeText(ContentSample.this, "Punjab touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Punjab");
+						}if(pixel.equalsIgnoreCase("ffc1e1b2")){
+							Toast.makeText(ContentSample.this, "Haryana touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Haryana");
+						}if(pixel.equalsIgnoreCase("fffcff00")){
+							Toast.makeText(ContentSample.this, "Delhi touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Delhi");
+						}if(pixel.equalsIgnoreCase("ff5a25f3")){
+							Toast.makeText(ContentSample.this, "West Bengal touched", Toast.LENGTH_SHORT).show();
+							build_dialog("West Bengal");
+						}if(pixel.equalsIgnoreCase("ff8010d4")){
+							Toast.makeText(ContentSample.this, "Assam touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Assam");
+						}if(pixel.equalsIgnoreCase("ffda7501")){
+							Toast.makeText(ContentSample.this, "Arunachal Pradesh touched", Toast.LENGTH_SHORT).show();
+							build_dialog("Arunachal Pradesh");
 						}
-
-
+						
 						return false;
 					}
-					//
-					//					private int getHotspotColor(int evX,
-					//							int evY) {
-					//						
-					//						  india.setDrawingCacheEnabled(true);
-					//						  System.out.println("we are bitmap");
-					//						  Bitmap hotspots = Bitmap.createBitmap(india.getDrawingCache());
-					//						  System.out.println("created");
-					//						  india.setDrawingCacheEnabled(false);
-					//						  return hotspots.getPixel(evX, evY);
-					//					}
 				});
-
+				
 			}else if(position == 2){
 			}
 
 			mContentTextView.setText(((TextView) view).getText());
 			mMenuDrawer.closeMenu();
 		}
-
-
 	};
-
-
-
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -309,23 +353,33 @@ public class ContentSample extends Activity implements OnClickListener{
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
 				ContentSample.this);
 		builder.setView(layout);
-		builder.setTitle(contact.get(1).toString()); //name
+		builder.setIcon(R.drawable.contact_logo);
+		builder.setTitle(contact.get(1).toString()+ " , " + contact.get(0).toString()); //name
 
 		LinearLayout parent = (LinearLayout)layout.findViewById(R.id.contact_parent);
-		//********************************************************************
+		//****************************email******************************
 		System.out.println("----- Split by space ' ' ------"+contact.get(2).toString());
 		TextView tv = new TextView(ContentSample.this);
-		tv.setText("Email Id");
-		parent.addView(tv, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		tv.setBackgroundColor(Color.LTGRAY);
+		tv.setText(android.text.Html.fromHtml("<b>Email Id<b>"));
+		parent.addView(tv, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		//add email id
 		StringTokenizer st = new StringTokenizer(contact.get(2).toString(), " ");
 		while (st.hasMoreElements()) {
-			tv = new TextView(ContentSample.this);
+			LinearLayout email_layout = new LinearLayout(ContentSample.this);
+			email_layout.setOrientation(LinearLayout.HORIZONTAL);
+			parent.addView(email_layout, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			
+			tv = new TextView(email_layout.getContext());
 			final String email_str = (android.text.Html.fromHtml(st.nextElement().toString())).toString().replaceAll("\n", "");
 			tv.setText(email_str);
-			tv.setClickable(true);
-			tv.setOnClickListener(new OnClickListener() {
-
+			email_layout.addView(tv, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			
+			
+			ImageButton icon = new ImageButton(email_layout.getContext());
+			icon.setBackgroundResource(android.R.drawable.ic_dialog_email);
+			icon.setOnClickListener(new OnClickListener() {
+				
 				@Override
 				public void onClick(View v) {
 					Intent email = new Intent(Intent.ACTION_SEND);
@@ -337,24 +391,53 @@ public class ContentSample extends Activity implements OnClickListener{
 					//need this to prompts email client only
 					email.setType("message/rfc822");
 					startActivity(Intent.createChooser(email, "Choose an Email client :"));
-
+					
 				}
 			});
-			parent.addView(tv, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			email_layout.addView(icon, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		}
-		//********************************************************************
+		//*********************************Phone no*************************
 		tv = new TextView(ContentSample.this);
-		tv.setText("Phone number");
+		tv.setText(android.text.Html.fromHtml("<b>Phone number<b>"));
+		tv.setBackgroundColor(Color.LTGRAY);
 		parent.addView(tv, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		//add phone number
 		st = new StringTokenizer(contact.get(3).toString(), ",");
 		while (st.hasMoreElements()) {
+			LinearLayout email_layout = new LinearLayout(ContentSample.this);
+			email_layout.setOrientation(LinearLayout.HORIZONTAL);
+			parent.addView(email_layout, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			
 			tv = new TextView(ContentSample.this);
 			final String ph_no = android.text.Html.fromHtml(st.nextElement().toString()).toString().replaceAll("\n", "");
 			tv.setText(ph_no);
-			tv.setClickable(true);
-			tv.setOnClickListener(new OnClickListener() {
-
+			email_layout.addView(tv, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			
+			ImageButton icon = new ImageButton(ContentSample.this);
+			icon.setBackgroundResource(android.R.drawable.stat_sys_phone_call);
+			icon.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					try {
+						Intent my_callIntent = new Intent(Intent.ACTION_CALL);
+				        my_callIntent.setData(Uri.parse("tel:"+ph_no));//here the word 'tel' is important for making a call...
+				        startActivity(my_callIntent);
+					} catch (Exception e) {
+						Toast.makeText(getApplicationContext(),
+								"Call failed, please try again later!",
+								Toast.LENGTH_LONG).show();
+						e.printStackTrace();
+					}
+					
+				}
+			});
+			email_layout.addView(icon, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			
+			icon = new ImageButton(ContentSample.this);
+			icon.setBackgroundResource(android.R.drawable.sym_action_email);
+			icon.setOnClickListener(new OnClickListener() {
+				
 				@Override
 				public void onClick(View v) {
 					try {
@@ -365,14 +448,13 @@ public class ContentSample extends Activity implements OnClickListener{
 						startActivity(sendIntent);
 					} catch (Exception e) {
 						Toast.makeText(getApplicationContext(),
-								"SMS faild, please try again later!",
+								"SMS failed, please try again later!",
 								Toast.LENGTH_LONG).show();
 						e.printStackTrace();
 					}
-
 				}
 			});
-			parent.addView(tv, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			email_layout.addView(icon, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		}
 		//********************************************************************
 		Dialog dialog = builder.create();
@@ -515,6 +597,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		String result = "";
 		@Override        	
 		public void onPreExecute() {
+			System.out.println("We are in PRE"+MYpostParameters.get(0));
 			super.onPreExecute();
 		}
 
@@ -546,26 +629,29 @@ public class ContentSample extends Activity implements OnClickListener{
 		}
 
 		public void onPostExecute(String unused) {
-			System.out.println("RESULT is"+result);
-			if(mActivePosition == 0){
-				saveEventsInDatabaseAndDislpay(result);
+			try {
+				System.out.println("RESULT is"+result);
+				String[] rows = StringUtils.substringsBetween(result,"[","]");
+				if(mActivePosition == 0){
+
+					for(int i=0;i<rows.length;i++){
+						db.addEvent(new Event(rows[i], "001"));
+						//db.close();
+					}
+					List<String> eventList = Arrays.asList(rows);  
+					displayEvents(eventList);
+				}else if(mActivePosition == 1){
+					for(int i=0;i<rows.length;i++){
+						String[] row = StringUtils.substringsBetween(rows[i],"(",")");
+						db.addContactPerson(new Contacts(row[0],row[1],row[3],row[2]));
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("ERROR"+e.getMessage().toString());
+				Toast.makeText(ContentSample.this,"Error: "+e.getMessage().toString()
+						+"\nPlease check internet connection",Toast.LENGTH_LONG).show();
 			}
-
 		}
-
-
-	}
-	private void saveEventsInDatabaseAndDislpay(String result) {
-		//String[] Events = StringUtils.substringsBetween(result,"{([","])}");     
-		//System.out.println("Events"+Events[0]);
-		String[] event_row = StringUtils.substringsBetween(result,"[","]");            
-		for(int i=0;i<event_row.length;i++){
-			db.addEvent(new Event(event_row[i], "001"));
-			db.close();
-		}
-		List<String> eventList = Arrays.asList(event_row);  
-		displayEvents(eventList);
-
 	}
 
 	private void displayEvents(List<String> event_row) {
@@ -589,87 +675,7 @@ public class ContentSample extends Activity implements OnClickListener{
 
 		LinearLayout parent = (LinearLayout) window_layout.findViewById(R.id.load_screenshot_parent);
 		parent.setVisibility(View.GONE);
-		
-	}
-	
-	// DOWNLOAD ??
-	public class DownloadContactAsync extends AsyncTask<String, String, String> {
-		String result = "";
 
-		@Override        	
-		public void onPreExecute() {
-			super.onPreExecute();
-		}
-
-		public String doInBackground(String... aurl) {
-			int count;
-
-			try {
-				HttpClient httpClient = new DefaultHttpClient();
-				HttpContext localContext = new BasicHttpContext();
-				HttpGet httpGet = new HttpGet(aurl[0]);
-
-				HttpResponse response = httpClient.execute(httpGet, localContext);
-
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(
-								response.getEntity().getContent()
-								)
-						);
-
-
-				String line = null;
-				while ((line = reader.readLine()) != null){
-					result += line + "\n";
-
-				}
-
-			} catch (Exception e) {
-				System.out.println("error is "+ e.getMessage());
-			}
-
-			return null;
-
-		}
-
-		public void onProgressUpdate(String... progress) {
-			//mProgressDialog.setProgress(Integer.parseInt(progress[0]));
-
-		}
-
-		public void onPostExecute(String unused) {
-			try {
-				//Toast.makeText(ContentSample.this,result,Toast.LENGTH_LONG).show();
-				String[] contacts_table = StringUtils.substringsBetween(result,"<table border=","</table>");      
-				String[] contact_row = StringUtils.substringsBetween(contacts_table[1],"<tr>","</tr>");            
-				//TextView messages = (TextView) window_layout.findViewById(R.id.textView1);
-
-
-				//save contact details in database 
-				for (int i = 0; i < contact_row.length; i++) {
-					String[] td = StringUtils.substringsBetween(contact_row[i],"<td","</td>");
-					String state = td[1].substring(1);
-					String person_name = StringUtils.substringBetween(td[2],"<b>","</b>");
-					String email = td[3].substring(1);
-					String phone;
-					if(i == contact_row.length-1){
-						phone = StringUtils.substringBetween(td[4],">","<p>").substring(1);
-					}else{
-						phone = td[4].substring(1);
-					}
-
-
-					db.addContactPerson(new Contacts(state, person_name,email,phone));
-					db.close();
-				}
-
-
-			} catch (Exception e) {
-				System.out.println("ERROR 2"+e.getMessage().toString());
-				Toast.makeText(ContentSample.this,"Error: "+e.getMessage().toString()
-						+"\nPlease check internet connection",Toast.LENGTH_LONG).show();
-			}
-		}
 	}
 
 

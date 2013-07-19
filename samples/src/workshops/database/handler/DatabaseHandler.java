@@ -131,8 +131,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	
 	
 		// Getting All contacts
-		public List<Contacts> getAllContacts() {
-			List<Contacts> conatctList = new ArrayList<Contacts>();
+		public List<String> getAllContacts() {
+			List<String> conatctList = new ArrayList<String>();
 			// Select All Query
 			String selectQuery = "SELECT  * FROM " + TABLE_CONTACTS;
 
@@ -142,14 +142,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			// looping through all rows and adding to list
 			if (cursor.moveToFirst()) {
 				do {
-					Contacts contact = new Contacts();
-					contact.set_id(Integer.parseInt(cursor.getString(0)));
-					contact.set_state(cursor.getString(1));
-					contact.set_person(cursor.getString(2));
-					contact.set_email(cursor.getString(3));
-					contact.set_phone(cursor.getString(4));
-					// Adding event to list
-					conatctList.add(contact);
+					conatctList.add(cursor.getString(1).toString());
 				} while (cursor.moveToNext());
 			}
 

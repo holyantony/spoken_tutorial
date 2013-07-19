@@ -5,15 +5,20 @@
             android:layout_gravity="center">
         <ScrollView 
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fadeScrollbars="false"
+			android:scrollbarAlwaysDrawVerticalTrack="true">
             <HorizontalScrollView 
                 android:layout_width="match_parent"
-            	android:layout_height="wrap_content">
+            	android:layout_height="wrap_content"
+            	android:scrollbarFadeDuration="0"
+            	android:fadeScrollbars="false"
+				android:scrollbarAlwaysDrawHorizontalTrack="true">
 		        <ImageView
 		            android:id="@+id/imageButton1"
 		            android:layout_width="wrap_content"
 		            android:layout_height="match_parent"
-		            android:src="@drawable/indialarge" />
+		            android:src="@drawable/india_map" />
        		</HorizontalScrollView>
 		</ScrollView>
 </LinearLayout>
