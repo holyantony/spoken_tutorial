@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_selector"
+    android:orientation="horizontal"
+    android:padding="10dip" >
+
+    <TextView
+        android:id="@+id/sr_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="15dip"
+       	android:paddingLeft="15dip"
+        android:textSize="20dp"
+        android:text="Medium" 
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+         />
+
+    <TextView
+        android:id="@+id/soft_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:paddingRight="15dip"
+         android:paddingLeft="25dip"
+        android:layout_toRightOf="@+id/sr_no"
+        android:textSize="20dp"
+        
+        android:text="Medium Text" />
+
+    <TextView
+        android:id="@+id/soft_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:paddingRight="15dip"
+       android:paddingLeft="25dip"
+        android:layout_toRightOf="@+id/soft_title"
+        android:textSize="20dp"
+       
+        android:text="Small Text"/>
+    
+    <TextView
+        android:id="@+id/language"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:paddingRight="15dip"
+       android:paddingLeft="25dip"
+        android:layout_toRightOf="@+id/soft_level"
+        android:textSize="20dp"
+       
+        android:text="Small Text"/>
+    
+    
+    <TextView
+        android:id="@+id/soft_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:paddingRight="25dip"
+       android:paddingLeft="25dip"
+        android:layout_toLeftOf="@+id/right_image"
+         android:layout_toRightOf="@+id/language"
+        android:textSize="20dp"
+        android:textColor="#0481ab"
+        android:text="Text"/>
+    
+      <ImageView
+          android:id="@+id/right_image"
+          android:layout_width="50dip"
+          android:layout_height="50dip"
+          android:layout_alignParentRight="true"
+         />
+
+</RelativeLayout>

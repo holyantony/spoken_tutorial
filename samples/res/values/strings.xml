@@ -38,6 +38,56 @@
         Please reply me with necessary details.\n
         Thank you.\n
         </string>
+        
+    <string-array name="software_subtitle">
+        <item>Advanced c c++</item>
+        <item>Blender is a free open source 3D graphics application, available under the GNU General Public License for the Linux, Mac OS X, FreeBSD, OpenBSD and Microsoft Windows operating systems. </item>
+        <item>Powerful features, simple syntax, and portability make C a preferred language among programmers for business and industrial applications</item>
+ 	    <item>CellDesigner is a SBML compliant software , it is process diagram editor for drawing gene-regulatory and biochemical networks</item>
+        <item>A digital divide is an economic inequality between groups, broadly construed, in terms of access to, use of, or knowledge of information and communication technologies (ICT)</item>
+        <item>Drupal is a free and open source content management system (CMS) written in PHP and distributed under the GNU General Public License</item>
+        <item>Mozilla Firefox or simply Firefox is a free, open source web browser,it is the default web browser for Ubuntu Linux. </item>
+        <item>GChemPaint is a 2D chemical structures editor for the Gnome-2 desktop.</item>
+        <item>GeoGebra is an interactive geometry software for education in schools. GeoGebra is written in Java and thus available for multiple platforms</item>
+        <item>GeoGebra is an interactive geometry, algebra, and calculus application, intended for teachers and students</item>
+        <item>GIMP (GNU Image Manipulation Program) is a free software raster graphics editor</item>
+        <item>It allow to simulate complex network. It works on windows, Linux and Mac OS based machines</item>
+        <item></item>
+        <item>It is a free and open source high level programming language,simple as well as object oriented language</item>
+        <item>KiCad is a open source(GPL) integrated package for electronics design automation(EDA),used for designing schematics of electronics circuits and printed circuit board(PCB)</item>
+        <item>KTouch is a typing tutor,it teaches you how to type using an online interactive keyboard</item>
+        <item>KTurtle is an educational programming environment that aims to make learning how to program as easy as possible</item>
+        <item>LaTeX is a high-quality typesetting system,it includes features designed for the production of technical and scientific documentation</item>
+        <item>LibreOffice Base is the database front-end of the LibreOffice suite,Base is the equivalent of Microsoft Access</item>
+        <item>It is the equivalent of Microsoft Excel in Microsoft Suite and has a number of unique features, including a system which automatically defines series of graphs, based on information available to the user</item>
+        <item>LibreOffice is a graphics software that allows you to create a wide range of vector graphics</item>
+        <item></item>
+        <item>LibreOffice Math is a software application designed for creating and editing mathematical formulae</item>
+        <item>LibreOffice Writer is the word processor component of the LibreOffice Suite.It is the equivalent of Microsoft Word in Microsoft Office Suite</item>
+        <item>Linux is one of the most popular Operating Systems used in todays world</item>
+        <item>NetBeans IDE supports development of all Java application types (Java SE including JavaFX, (Java ME, web, EJB and mobile applications)NetBeans refers to both a platform framework for Java desktop applications</item>
+        <item>Ngspice is a general-purpose Electrical / Electronics circuit simulation program for nonlinear and linear analysis</item>
+        <item>OpenFOAM (Open Source Field Operation and Manipulation) is a free, open source CFD software package developed by the OpenFOAM Team at SGI(Silicon Graphics International) Corporation and distributed by the OpenFOAM Foundation</item>
+        <item>Orca is a Free and Open source screen reader that works in GNU/Linux operating system</item>
+        <item>Perl (Practical Extraction and Reporting Language) is widely used open-source language</item>
+        <item>PHP: Hypertext Preprocessor" is a widely-used Open Source general-purpose scripting language that is especially suited for Web development and can be embedded into HTML</item>
+        <item>Numerical computational software for Science and Engineering Education - used in 3D animation and Gaming industry, Artificial Intelligence, YouTube, NASA, CERN, Yahoo and so on</item>
+        <item>Numerical computational software for Science and Engineering Education - used in 3D animation and Gaming industry, Artificial Intelligence, YouTube, NASA, CERN, Yahoo and so on</item>
+        <item>QCAD is an application for computer aided drafting in two dimensions (2d)</item>
+        <item>Ruby an absolutely pure object-oriented scripting language and a genuine attempt to combine the best of everything in the scripting world</item>
+        <item>Mathematical and scientific calculation software, open source substitute for MATLAB, very useful for all science and engineering students, in academics particularly. </item>
+        <item>Selenium is an open source Test Automation tool which has rich set of testing functions and the operations are highly flexible</item>
+        <item>A single-board heater system is a low cost, open source, lab-in-a-box setup</item>
+        <item></item>
+        <item>STEP is an interactive tool for learning Physics. Using this tool, you can model the physical world through simulations</item>
+        <item>The Spoken Tutorials for Thunderbird are being contributed by DesiCrew Solutions, Chennai</item>
+        <item>Tux Typing provides the following important features:Start typing,Practice lessons,Play a game,Set language for typing</item>
+        <item></item>
+        <item>Xfig is an interactive drawing tool which runs under X Window System on most UNIX-compatible platforms</item>
+        
+    </string-array>
     <string name="query1">SELECT wr.cfm_wkshop_date, wr.foss_category, ac.id, ac.institution_name, ac.state_code, ac.city FROM workshop_requests wr, academic_center ac WHERE wr.cfm_wkshop_date > \'\".DATE("Y-m-d").\"\' and wr.status=1 and ac.academic_code=wr.academic_code ORDER BY wr.cfm_wkshop_date, wr.cfm_wkshop_time ASC</string>
-    <string name="query2">SELECT st.name, st.code, rp.rp_fname, rp.phone, u.mail FROM states st, resource_person rp, cdeep.users u where FIND_IN_SET(st.code, rp.states) > 0 and rp.user_uid=u.uid and rp.state_code!=\"\"</string>
+    <string name="query2">SELECT st.name, st.code, rp.rp_fname, rp.phone, u.mail FROM states st, resource_person rp, CDEEP.users u where FIND_IN_SET(st.code, rp.states) > 0 and rp.user_uid=u.uid and rp.state_code!=\"\"</string>
+    <string name="query3">SELECT distinct td.foss_category from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where tr.tutorial_status=\'accepted\' and tr.tutorial_detail_id=td.id  ORDER BY td.foss_category ASC</string>
+    
     </resources>

@@ -14,6 +14,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -22,8 +23,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsManager;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,12 +36,15 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.TableLayout;
@@ -86,11 +93,17 @@ public class ContentSample extends Activity implements OnClickListener{
 	private TextView mContentTextView;
 	ArrayList<NameValuePair> MYpostParameters;
 	static View window_layout;
-
+	ListView foss_cat_list_view;
 	String res;
 	DatabaseHandler db;
 	String[] names;
-
+	String foss_name;
+	static Boolean flag = true;
+	ArrayList<FossCategory> foss_cat_list;
+	int[] dr;
+	int image_id;
+	String[] SubtitleStringArray;
+	AdapterView.AdapterContextMenuInfo info ;
 	@Override
 	protected void onCreate(Bundle inState) {
 		super.onCreate(inState);
@@ -105,14 +118,30 @@ public class ContentSample extends Activity implements OnClickListener{
 		mMenuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_CONTENT);
 		mMenuDrawer.setContentView(R.layout.activity_contentsample);
 		mMenuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
+		SubtitleStringArray = getResources().getStringArray(R.array.software_subtitle);
+		
+		dr = new int[]{R.drawable.advanced_cpp,R.drawable.blender,R.drawable.c_and_cpp,
+				R.drawable.cell_designer,R.drawable.digital_divide
+				,R.drawable.drupal,R.drawable.firefox,R.drawable.gchempaint,
+				R.drawable.geogebra, R.drawable.geogebra_for_engineering_drawing,R.drawable.gimp
+				,R.drawable.gns3,R.drawable.gschem,R.drawable.java,R.drawable.kicad,
+				R.drawable.ktouch,R.drawable.kturtal
+				,R.drawable.latex,R.drawable.libre_office_base_icon_gs_base,R.drawable.libre_office_calc_icon_gs_calc,
+				R.drawable.libre_office_draw_icon_gs_draw,R.drawable.libre_office_impress_icon_gs_impress,
+				R.drawable.libre_office_math_icon_gs_math,R.drawable.libre_office_writer_icon_gs_writer
+				,R.drawable.linux,R.drawable.netbeans,R.drawable.ngspice,R.drawable.openfoam_ogo,
+				R.drawable.orca,R.drawable.perl,R.drawable.php_mysql,R.drawable.python,R.drawable.python,
+				R.drawable.qcad,R.drawable.ruby,R.drawable.scilab,R.drawable.selenium,
+				R.drawable.single_board_heater_system,R.drawable.spokentutorial,R.drawable.step,R.drawable.thunderbird
+				,R.drawable.tux_typing,R.drawable.what_is_spoken_tutorial,R.drawable.x_fig};  
 
 		List<Object> items = new ArrayList<Object>();
 		//items.add(new Category("About"));
 		items.add(new Item("Workshops", R.drawable.ic_action_refresh_dark));
 		items.add(new Item("Contacts for workshop", R.drawable.ic_action_select_all_dark));
-		items.add(new Category("Events"));
-		items.add(new Item("Item 3", R.drawable.ic_action_refresh_dark));
-		items.add(new Item("Item 4", R.drawable.ic_action_select_all_dark));
+		items.add(new Category("FOSS Category"));
+		items.add(new Item("softwares", R.drawable.ic_action_refresh_dark));
+		items.add(new Item("Videos", R.drawable.ic_action_select_all_dark));
 		items.add(new Category("Cat 2"));
 		items.add(new Item("Item 5", R.drawable.ic_action_refresh_dark));
 		items.add(new Item("Item 6", R.drawable.ic_action_select_all_dark));
@@ -123,7 +152,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		items.add(new Item("Item 9", R.drawable.ic_action_refresh_dark));
 		items.add(new Item("Item 10", R.drawable.ic_action_select_all_dark));
 
-		mList = new ListView(this);
+		mList = new ListView(this);  
 		mAdapter = new MenuAdapter(items);
 		mList.setAdapter(mAdapter);
 		mList.setOnItemClickListener(mItemClickListener);
@@ -156,16 +185,41 @@ public class ContentSample extends Activity implements OnClickListener{
 		else if(mActivePosition == 1){
 			// query db
 			eventList = db.getAllContacts();
+		}else if(mActivePosition == 3)
+		{
+			if(flag==true)
+			{
+				eventList = db.getAllFossCat();
+			    System.out.println("foss category "+eventList);}
+			else
+			{
+				eventList = db.getAllFossLanguage();
+				System.out.println("foss language"+eventList);
+			}
 		}
+		
 		if(eventList.size() != 0){
-			try {
+			//try {
 				System.out.println("ENTRIES AVAILABLE IN DATABASE");
 				if(mActivePosition == 0){
 					displayEvents(eventList);
+				}else if(mActivePosition == 3){
+					System.out.println("entirs");
+					displayFoss(eventList);
+					//openContextMenu(v);
+					/*foss_cat_list_view.setAdapter(new CustomAdapter(foss_cat_list,ContentSample.this));
+					foss_cat_list_view.setOnItemClickListener(new OnItemClickListener() {
+	            	 public void onItemClick(AdapterView a, View v, int position, long id) {
+	                     
+	                   // String s =(String) ((TextView) v.findViewById(R.id.soft_title)).getText();
+	                   // Toast.makeText(ContentSample.this, s, Toast.LENGTH_LONG).show();
+	            		 openContextMenu(v);
+	                         }
+	                 });*/
 				}
-			} catch (Exception e) {
-				System.out.println("EXCEPTION: "+e.getMessage().toString());
-			}
+			//} catch (Exception e) {
+				//System.out.println("EXCEPTION: "+e.getMessage().toString());
+			//}
 
 		}else{
 			System.out.println("NO ENTRIES IN DATABASE");
@@ -206,21 +260,22 @@ public class ContentSample extends Activity implements OnClickListener{
 
 			MYpostParameters = new ArrayList<NameValuePair>();
 
-
-			mActivePosition = position;
+   
+			mActivePosition = position;   
 			if(position == 0){
 				mMenuDrawer.setContentView(R.layout.workshop_list);
 				window_layout = (View) mMenuDrawer.getParent();
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query1)));
 				MYpostParameters.add(new BasicNameValuePair("query_no","1"));
-
-				/*
+   
+				/*   
 				 * get the http response from server
 				 */
 				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				//getResponseFromServer("http://10.118.248.195/check.php");
 
-			}else if(position == 1){
+			}else if(position == 1){    
 				mMenuDrawer.setContentView(R.layout.contact);
 				window_layout = (View) mMenuDrawer.getParent();
 
@@ -231,14 +286,15 @@ public class ContentSample extends Activity implements OnClickListener{
 				 * get the http response from server
 				 */
 				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				//getResponseFromServer("http://10.118.248.195/check.php");
 				final ImageView india = (ImageView)window_layout.findViewById(R.id.imageButton1);
 				final Bitmap bitmap = ((BitmapDrawable)india.getDrawable()).getBitmap();
 				india.setOnTouchListener(new OnTouchListener() {
-
+  
 					public boolean onTouch(View v, MotionEvent event) {
 						final int evX = (int) event.getX();
 						final int evY = (int) event.getY();
-						Toast.makeText(ContentSample.this, "touched"+evX+"  "+evY, Toast.LENGTH_SHORT).show();
+						//Toast.makeText(ContentSample.this, "touched"+evX+"  "+evY, Toast.LENGTH_SHORT).show();
 						System.out.println("created");
 						india.setDrawingCacheEnabled(false);
 						String pixel = Integer.toHexString(bitmap.getPixel(evX, evY));
@@ -288,13 +344,13 @@ public class ContentSample extends Activity implements OnClickListener{
 							build_dialog("Bihar");
 						}if(pixel.equalsIgnoreCase("fff8de01")){
 							Toast.makeText(ContentSample.this, "Jammu Kashmir touched", Toast.LENGTH_SHORT).show();
-							build_dialog("Jammu Kashmir");
+							build_dialog("Jammu Kashmir");   
 						}if(pixel.equalsIgnoreCase("ff794df8")){
 							Toast.makeText(ContentSample.this, "Himachal Pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Himachal Pradesh");
 						}if(pixel.equalsIgnoreCase("ffb12816")){
 							Toast.makeText(ContentSample.this, "Uttarakhand touched", Toast.LENGTH_SHORT).show();
-							build_dialog("Uttarakhand");
+							build_dialog("Uttarakhand");  
 						}if(pixel.equalsIgnoreCase("fffdf9ba")){
 							Toast.makeText(ContentSample.this, "Punjab touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Punjab");
@@ -320,6 +376,23 @@ public class ContentSample extends Activity implements OnClickListener{
 				});
 				
 			}else if(position == 2){
+			}
+			else if(position == 3){  
+				mMenuDrawer.setContentView(R.layout.software_main); // set the main content view list row
+				foss_cat_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get the list row id 
+				flag = true; // flag true-is for getting foss category .. false - all software list according language
+				registerForContextMenu(foss_cat_list_view);
+				MYpostParameters.removeAll(MYpostParameters);
+				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query3)));
+				MYpostParameters.add(new BasicNameValuePair("query_no","3"));
+				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				//getResponseFromServer("http://10.118.248.195/check.php");
+				
+			}else if (position==4) {
+				Intent intent = new Intent(ContentSample.this, vedio.class);
+				startActivity(intent);
+				
+				
 			}
 
 			mContentTextView.setText(((TextView) view).getText());
@@ -352,8 +425,8 @@ public class ContentSample extends Activity implements OnClickListener{
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
 				ContentSample.this);
-		builder.setView(layout);
-		builder.setIcon(R.drawable.contact_logo);
+		builder.setView(layout);  
+		builder.setIcon(R.drawable.contact_logo);   
 		builder.setTitle(contact.get(1).toString()+ " , " + contact.get(0).toString()); //name
 
 		LinearLayout parent = (LinearLayout)layout.findViewById(R.id.contact_parent);
@@ -373,11 +446,21 @@ public class ContentSample extends Activity implements OnClickListener{
 			tv = new TextView(email_layout.getContext());
 			final String email_str = (android.text.Html.fromHtml(st.nextElement().toString())).toString().replaceAll("\n", "");
 			tv.setText(email_str);
+			
 			email_layout.addView(tv, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			
 			
 			ImageButton icon = new ImageButton(email_layout.getContext());
+			
 			icon.setBackgroundResource(android.R.drawable.ic_dialog_email);
+			
+			RelativeLayout rel_layout = new RelativeLayout(ContentSample.this);
+			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+			    RelativeLayout.LayoutParams.WRAP_CONTENT,
+			    RelativeLayout.LayoutParams.WRAP_CONTENT);
+			lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			rel_layout.addView(icon, lp);
+			
 			icon.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -389,12 +472,12 @@ public class ContentSample extends Activity implements OnClickListener{
 					email.putExtra(Intent.EXTRA_SUBJECT, "Regarding workshop");
 					email.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_content));
 					//need this to prompts email client only
-					email.setType("message/rfc822");
+					email.setType("message/rfc822");   
 					startActivity(Intent.createChooser(email, "Choose an Email client :"));
 					
 				}
 			});
-			email_layout.addView(icon, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			email_layout.addView(rel_layout, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		}
 		//*********************************Phone no*************************
 		tv = new TextView(ContentSample.this);
@@ -405,16 +488,39 @@ public class ContentSample extends Activity implements OnClickListener{
 		st = new StringTokenizer(contact.get(3).toString(), ",");
 		while (st.hasMoreElements()) {
 			LinearLayout email_layout = new LinearLayout(ContentSample.this);
+			LinearLayout text_view = new LinearLayout(ContentSample.this);
+			LinearLayout image_buttons = new LinearLayout(ContentSample.this);
+
+
+
 			email_layout.setOrientation(LinearLayout.HORIZONTAL);
+			text_view.setOrientation(LinearLayout.VERTICAL);
+			image_buttons.setOrientation(LinearLayout.HORIZONTAL);
+			
+			text_view.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,1f));
+			
+
+
+
 			parent.addView(email_layout, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			
 			tv = new TextView(ContentSample.this);
 			final String ph_no = android.text.Html.fromHtml(st.nextElement().toString()).toString().replaceAll("\n", "");
+			
 			tv.setText(ph_no);
-			email_layout.addView(tv, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			text_view.addView(tv);
+
+			email_layout.addView(text_view);
+
+			
 			
 			ImageButton icon = new ImageButton(ContentSample.this);
 			icon.setBackgroundResource(android.R.drawable.stat_sys_phone_call);
+			image_buttons.addView(icon);
+
+			
+			
+			
 			icon.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -432,10 +538,12 @@ public class ContentSample extends Activity implements OnClickListener{
 					
 				}
 			});
-			email_layout.addView(icon, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			
 			icon = new ImageButton(ContentSample.this);
 			icon.setBackgroundResource(android.R.drawable.sym_action_email);
+			image_buttons.addView(icon);
+
+
 			icon.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -454,12 +562,15 @@ public class ContentSample extends Activity implements OnClickListener{
 					}
 				}
 			});
-			email_layout.addView(icon, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			email_layout.addView(image_buttons);
+
+//			email_layout.addView(rel_layout1, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		}
 		//********************************************************************
 		Dialog dialog = builder.create();
 		dialog.show();
 	}
+
 
 	@Override
 	public void onBackPressed() {
@@ -645,6 +756,32 @@ public class ContentSample extends Activity implements OnClickListener{
 						String[] row = StringUtils.substringsBetween(rows[i],"(",")");
 						db.addContactPerson(new Contacts(row[0],row[1],row[3],row[2]));
 					}
+				}else if (mActivePosition == 3){
+					
+					for(int i=0;i<rows.length;i++){
+						if(flag == false)
+						{
+							System.out.println("foss name :"+foss_name);
+							FossCategory foss = new FossCategory(foss_name,rows[i]);
+							db.addFossLanugaes(foss);
+							listenerOnListView();
+						}
+						else{
+							System.out.println("valuue :"+dr[i]+""+rows[i]);
+							FossCategory foss = new FossCategory(dr[i],rows[i]);
+							db.addFossCategory(foss);
+						}
+						
+						
+						//foss_cat_list.add(new FossCategory(dr[i] ,rows[i]));
+						//db.close();
+					}
+					
+					
+					List<String> eventList = Arrays.asList(rows);  
+					displayFoss(eventList);
+					
+					
 				}
 			} catch (Exception e) {
 				System.out.println("ERROR"+e.getMessage().toString());
@@ -677,6 +814,29 @@ public class ContentSample extends Activity implements OnClickListener{
 		parent.setVisibility(View.GONE);
 
 	}
+	private void displayFoss(List<String> event_row) {
+		
+		SimpleAdapter adapter; 
+		
+		String[] from = new String[] {"iamgeid", "foss","subtitle"};
+		int[] to = new int[] {R.id.image_id, R.id.soft_title,R.id.soft_sub_title};
+		
+		final List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
+
+		for(int i = 0; i < event_row.size(); i++){
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("iamgeid", "" + dr[i]);
+			map.put("foss", "" + event_row.get(i));
+			map.put("subtitle","" + SubtitleStringArray[i]);
+			fillMaps.add(map);
+		}
+		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_list_row, from, to);
+		foss_cat_list_view.setAdapter(adapter);
+		LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
+		parent.setVisibility(View.GONE);
+		
+	}
+	
 
 
 	@Override
@@ -684,5 +844,84 @@ public class ContentSample extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 
 	}
+	public void listenerOnListView()
+	{
+		foss_cat_list_view.setOnItemClickListener(new OnItemClickListener() {
+	      	 public void onItemClick(AdapterView a, View v, int position, long id) {
+	               
+	      		 
+	            foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
+	            
+	      		 openContextMenu(v);
+	                   }
+	           });
+		
+	}
 
+	
+	
+	  @Override
+	   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	              // TODO Auto-generated method stub
+	              super.onCreateContextMenu(menu, v, menuInfo); 
+	              info = (AdapterContextMenuInfo) menuInfo;
+	              String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category = '"+foss_name +"' order by tr.language";
+		             System.out.println(query4);
+			            MYpostParameters.removeAll(MYpostParameters);
+						MYpostParameters.add(new BasicNameValuePair("query",query4));
+						MYpostParameters.add(new BasicNameValuePair("query_no","4"));
+						flag = false;
+						getResponseFromServer("http://10.118.248.44/xampp/check.php");
+						//getResponseFromServer("http://10.118.248.44/check.php");
+	              menu.setHeaderTitle("Select language for "+foss_name+" video tutorial");  
+	              Drawable d = getResources().getDrawable(dr[info.position]);
+	             menu.setHeaderIcon(getScaledIcon(d,50,50));
+	             menu.add(Menu.NONE, v.getId(), 0, "Assamese");
+	            
+	          }
+	           
+	   @Override
+	   public boolean onContextItemSelected(MenuItem item) {
+//		   details.get(info.position).setLanguage(item.getTitle().toString());
+//   	   Toast.makeText(ContentSample.this, "language"+details.get(info.position).getLanguage(), Toast.LENGTH_LONG).show();
+//   	   ArrayList<SoftwareDetails> details2 = new ArrayList<SoftwareDetails>();
+//	           if (item.getTitle() == "English") {
+//	        	   
+//	        	   mMenuDrawer.setContentView(R.layout.software_main);
+//					SoftwareListView = (ListView) findViewById(R.id.SoftwareList);
+//					flag = false;
+//					
+//					SoftwareDetails Detail1= new SoftwareDetails();
+//		             Detail1.setSr_no(1);
+//		             Detail1.setTitle(foss_name);
+//		             Detail1.setLanguage(details.get(info.position).getLanguage());
+//		             Detail1.setLevel("c2");
+//		             Detail1.setTutorialname("Introduction");
+//		             Detail1.setImageIcon(R.drawable.thump);
+//		           
+//		             details2.add(Detail1);
+//	             
+//					 SoftwareListView.setAdapter(new CustomAdapter(details2 , ContentSample.this));
+//	                  }
+//	            else if (item.getTitle() == "Hindi") {
+//	            	
+//	               //Do your working
+//	                  }
+//	            else if (item.getTitle() == "Marathi") {
+//	                  //Do your working
+//	              }
+//	            else     {
+//	                  return false;
+//	                  }
+	          return true;
+	          }
+	   
+	   public Drawable getScaledIcon( Drawable drawable, int dstWidth, int dstHeight ) {
+
+		    Bitmap bitmap = ( (BitmapDrawable) drawable ).getBitmap();
+		    Bitmap bitmapScaled = Bitmap.createScaledBitmap( bitmap, dstWidth, dstHeight, false );
+
+		    return new BitmapDrawable( getResources(), bitmapScaled );
+		}
+	
 }

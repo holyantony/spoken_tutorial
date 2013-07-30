@@ -64,6 +64,13 @@
         <activity
             android:name="net.simonvt.menudrawer.samples.BottomOverlaySample"
             android:theme="@style/SampleTheme.BottomDrawer" />
+<activity
+            android:name=".vedio"
+           />
+        <activity
+            android:name="PlayVideo"
+             />
+
     </application>
 
 </manifest>
