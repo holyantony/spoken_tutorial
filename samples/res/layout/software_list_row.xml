@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:padding="3dip"
         android:layout_alignParentLeft="true"
-       	android:background="@drawable/image_bg"
+       	
         android:layout_marginRight="5dip">
  
         <ImageView
@@ -32,18 +32,19 @@
         android:layout_alignTop="@+id/image_layout"
         android:layout_toRightOf="@+id/image_layout"
         android:typeface="sans"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textSize="18sp"
+        android:textColor="#993300"/>
  
     <!-- Software Tagline-->
     <TextView
         android:id="@+id/soft_sub_title"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content"    
         android:layout_below="@id/soft_title"
-        android:textColor="#343434"
-        android:textSize="15sp"
+       	android:textColor="#0481ab"
+        android:textSize="16sp"
         android:layout_marginTop="1dip"
+        
         android:layout_toRightOf="@+id/image_layout"
         />
  

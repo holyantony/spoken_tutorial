@@ -8,6 +8,7 @@ public class FossCategory {
     String _level;
     String _language;
     String _tutorialname;
+    String _tutoriallink;
    
 	public FossCategory()
     {
@@ -22,15 +23,21 @@ public class FossCategory {
 		this._fosscategory = _fosscategory;
 		this._language = _language;
 	}
-	public FossCategory(int _id,String _fosscategory,String _level,String _language,String _tutorialname) {
+	public FossCategory(String _fosscategory,String _language,String _level,String _tutorialname,String _tutoriallink) {
 		
-		this._id= _id;
 		this._fosscategory = _fosscategory;
-		this._level = _level;
 		this._language = _language;
+		this._level = _level;
 		this._tutorialname = _tutorialname;
+		this._tutoriallink = _tutoriallink;
 	}
-    public Integer get_id() {
+    public String get_tutoriallink() {
+		return _tutoriallink;
+	}
+	public void set_tutoriallink(String _tutoriallink) {
+		this._tutoriallink = _tutoriallink;
+	}
+	public Integer get_id() {
 		return _id;
 	}
 	public void set_id(Integer _id) {

@@ -26,7 +26,7 @@
          android:paddingLeft="25dip"
         android:layout_toRightOf="@+id/sr_no"
         android:textSize="20dp"
-        
+        android:textColor="#993300"
         android:text="Medium Text" />
 
     <TextView
@@ -37,7 +37,7 @@
        android:paddingLeft="25dip"
         android:layout_toRightOf="@+id/soft_title"
         android:textSize="20dp"
-       
+       android:textColor="#3300FF"
         android:text="Small Text"/>
     
     <TextView
@@ -48,7 +48,7 @@
        android:paddingLeft="25dip"
         android:layout_toRightOf="@+id/soft_level"
         android:textSize="20dp"
-       
+       android:textColor="#003399"
         android:text="Small Text"/>
     
     
