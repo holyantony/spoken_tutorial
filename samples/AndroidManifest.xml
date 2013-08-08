@@ -64,11 +64,21 @@
         <activity
             android:name="net.simonvt.menudrawer.samples.BottomOverlaySample"
             android:theme="@style/SampleTheme.BottomDrawer" />
-<activity
-            android:name=".vedio"
-           />
-        <activity
-            android:name="PlayVideo"
+ <activity
+            android:name=".from_sdcard"
+           	android:label="Internal Sdcard"
+            
+             />
+          <activity
+            android:name=".from_exsd"
+           	android:label="External Sdcard"
+            
+             />
+          
+          <activity
+            android:name=".from_web"
+           	android:label="Web"
+            
              />
 
     </application>

@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.LocalActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -47,6 +49,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
+import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -105,6 +108,7 @@ public class ContentSample extends Activity implements OnClickListener{
 	int image_id;
 	String[] SubtitleStringArray;
 	AdapterView.AdapterContextMenuInfo info ;
+    ArrayList<String> videoPath= new ArrayList<String>();
 	@Override
 	protected void onCreate(Bundle inState) {
 		super.onCreate(inState);
@@ -377,9 +381,33 @@ public class ContentSample extends Activity implements OnClickListener{
 				//getResponseFromServer("http://10.118.248.195/check.php");
 
 			}else if (position==4) {
-				Intent intent = new Intent(ContentSample.this, vedio.class);
-				startActivity(intent);
+				videoPath.clear();
+				mMenuDrawer.setContentView(R.layout.tab); // set the main
+				 Resources res = getResources();
+			        LocalActivityManager mlam = new LocalActivityManager(ContentSample.this, true);
+			        final TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
+			        
+			        Bundle savedInstanceState = null;
+					mlam.dispatchCreate(savedInstanceState);
+			        tabHost.setup(mlam );
+			        TabHost.TabSpec spec;
+			        Intent intent;
 
+			        intent = new Intent(ContentSample.this, from_sdcard.class);	
+			        spec = tabHost.newTabSpec("Internal Sdcard").setIndicator("Internal Sdcard").setContent(intent);
+			        tabHost.addTab(spec);
+
+			   
+			        intent = new Intent(ContentSample.this, from_exsd.class);	
+			        spec = tabHost.newTabSpec("External Sdcard").setIndicator("External Sdcard").setContent(intent);
+			        tabHost.addTab(spec);
+			        
+//			        intent = new Intent(ContentSample.this, from_web.class);	
+//			        spec = tabHost.newTabSpec("Web").setIndicator("Web").setContent(intent);
+//			        tabHost.addTab(spec);
+			        
+			        
+			        
 
 			}
 
