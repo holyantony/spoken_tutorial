@@ -42,6 +42,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -100,8 +101,8 @@ public class ContentSample extends Activity implements OnClickListener{
 	String res;
 	DatabaseHandler db;
 	String[] names;
-	String foss_name;
-	static Boolean fossflag = true,langflag = false;
+	static String foss_name,language;
+	static Boolean fossflag = true,langflag = false , gridview = true ,viewflag = true;
 	static int count ;
 	ArrayList<FossCategory> foss_cat_list;
 	int[] dr;
@@ -416,6 +417,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		}
 	};
 	private ListView foss_details_list_view;
+	private GridView foss_details_grid_view;
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -423,13 +425,66 @@ public class ContentSample extends Activity implements OnClickListener{
 		outState.putInt(STATE_ACTIVE_POSITION, mActivePosition);
 		outState.putString(STATE_CONTENT_TEXT, mContentText);
 	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// 'Help' menu to 66666main page options menu
+//		
+//		//menu.add(1,1,1,"Help");
+//		
+//			//menu.add(1,2,2,"Import");
+//			//menu.add(1,3,3,"Set IP");
+//		if(gridview == true)
+//		{
+//			menu.add(1,1,1,"list view");	
+//			//Drawable d = getResources().getDrawable(R.drawable.call_logo);
+//			//m1.setIcon(getScaledIcon(d,45,45));
+//			
+//		}else
+//		{
+//			//m1.setIcon(R.drawable.call_logo);
+//			menu.add(1,1,1,"grid view");
+//		}
+//	//return true;
+//	return super.onCreateOptionsMenu(menu);	
+//		//return super.onCreateOptionsMenu(menu);	
+//	}
+	@Override
 
+	public boolean onPrepareOptionsMenu(Menu menu) {
+
+	menu.clear();
+
+	if(viewflag) {
+
+	menu.add(1,1,1,"list view");
+
+	} else {
+
+	menu.add(2,2,2,"grid view");
+
+	}
+
+	return super.onPrepareOptionsMenu(menu);
+
+	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		System.out.println("id "+item.getItemId());
+		System.out.println("nem "+item.getGroupId());
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			mMenuDrawer.toggleMenu();
 			return true;
+		case 1:
+			
+			 List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
+			 displayFossListDetails(eventList);
+			break;
+		case 2:
+			
+			 List<ArrayList<String>> eventlist = db.getTutorialList(foss_name,language);
+			 displayFossGridDetails(eventlist);
+			break;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -807,8 +862,13 @@ public class ContentSample extends Activity implements OnClickListener{
 								}
 								eventList1.add((ArrayList<String>) List);
 							}
-							
-							displayFossDetails(eventList1);  
+							if(viewflag == true)
+							{
+								displayFossGridDetails(eventList1);  
+							}else
+							{
+								displayFossListDetails(eventList1);  
+							}
 						}
 				}
 			} catch (Exception e) {
@@ -872,22 +932,75 @@ public class ContentSample extends Activity implements OnClickListener{
 		//registerForContextMenu(foss_cat_list_view);
 		
 	}
-	public void adapterFossDetails(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
+	public void adapterFossGridDetails(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
 	{   
-		mMenuDrawer.setContentView(R.layout.software_main); // set the main content view list row
-		foss_details_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get the list row id 
-		SimpleAdapter adapter; 
+		mMenuDrawer.setContentView(R.layout.grid_foss_details); // set the main content view list row
+			foss_details_grid_view = (GridView) findViewById(R.id.gridview1); // get the list row id 
+			
+			//ImageView ivList = (ImageView) findViewById(R.id.tvList);
+			//ImageView ivGrid = (ImageView) findViewById(R.id.tvGrid);
+			/*ivList.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+			});*/
+			SimpleAdapter adapter; 
+	
+			adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_grid_view, from, to);
+			foss_details_grid_view.setAdapter(adapter);
+			//LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
+			//parent.setVisibility(View.GONE);
+			viewflag = true;
+		}
+	public void adapterFossListDetails(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
+	{   
 		
-		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_row, from, to);
-		foss_details_list_view.setAdapter(adapter);
-		LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
-		parent.setVisibility(View.GONE);
+			mMenuDrawer.setContentView(R.layout.software_main); // set the main content view list row
+			foss_details_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get the list row id 
+			SimpleAdapter adapter; 
+			
+			adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_row, from, to);
+			foss_details_list_view.setAdapter(adapter);
+			LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
+			parent.setVisibility(View.GONE);
+			viewflag = false;
 		
-	}
-	private void displayFossDetails(List<ArrayList<String>> event_row) {
-		String[] from = new String[] {"srno", "fossname","level","language","tutorial","imageid"};
-		int[] to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_level,R.id.language,R.id.soft_link,R.id.right_image};
-		final List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
+		}
+	
+	private void displayFossGridDetails(List<ArrayList<String>> event_row) {
+		final List<HashMap<String, String>> fillMaps;
+		String[] from;
+		int[] to;
+		from = new String[] {"srno", "fossname","tutorial","language"};
+			to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_link,R.id.language};
+			fillMaps = new ArrayList<HashMap<String, String>>();
+			Drawable d = getResources().getDrawable(R.drawable.thump);
+			
+			for(int i = 0; i < event_row.size(); i++){
+				int count = i;
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("srno", "" + ++count);  
+				map.put("fossname", "" +  event_row.get(i).get(0));  // foss category name
+				map.put("language","" +  event_row.get(i).get(1));  // level like c2 c3 ...
+				//map.put("level", "" +  event_row.get(i).get(2)); // selected language like English , Hindi ...
+				map.put("tutorial", "" +  event_row.get(i).get(3)); // Tutorial Name 
+				// event_row.get(4); //  link for video 
+				//map.put("imageid","" +getScaledIcon(d,100,100));
+				fillMaps.add(map);
+			}
+			adapterFossGridDetails(fillMaps, from, to);
+		}
+	private void displayFossListDetails(List<ArrayList<String>> event_row) {
+		final List<HashMap<String, String>> fillMaps;
+		String[] from;
+		int[] to;
+		
+			from = new String[] {"srno", "fossname","level","language","tutorial","imageid"};
+			to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_level,R.id.language,R.id.soft_link,R.id.right_image};
+		    fillMaps = new ArrayList<HashMap<String, String>>();
 	
 		for(int i = 0; i < event_row.size(); i++){
 			int count = i;
@@ -901,10 +1014,10 @@ public class ContentSample extends Activity implements OnClickListener{
 			map.put("imageid","" +R.drawable.thump);
 			fillMaps.add(map);
 		
+		
 		}
-		adapterFossDetails(fillMaps, from, to);
-
-		}
+		adapterFossListDetails(fillMaps, from, to);
+	}
 		
 	
 
@@ -981,10 +1094,12 @@ public class ContentSample extends Activity implements OnClickListener{
 		//foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
 		System.out.println("foss name for getting on item click"+foss_name);
 		System.out.println("language for getting on item click"+item.getTitle());
+		
 		String query5="select td.foss_category,tr.language,td.tutorial_level, td.tutorial_name ,tr.tutorial_video from CDEEP.tutorial_resources tr,CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='"+item.getTitle()+"'and td.foss_category='"+foss_name+"' ORDER BY td.tutorial_level, td.order_code ASC";
 		System.out.println("query 5 "+query5);    
 		langflag = false;
 		fossflag = false;
+		language = item.getTitle().toString();
 		MYpostParameters.removeAll(MYpostParameters);
 		MYpostParameters.add(new BasicNameValuePair("query",query5));
 		MYpostParameters.add(new BasicNameValuePair("query_no","5"));
@@ -996,44 +1111,19 @@ public class ContentSample extends Activity implements OnClickListener{
 		  {
 			new GetHttpResponseAsync().execute("http://10.118.248.195/check.php");
 		 }else{
-			 List<ArrayList<String>> eventList = db.getTutorialList(foss_name,item.getTitle().toString());
-			 displayFossDetails(eventList);
+			 List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
+			 if(viewflag == true)
+			 {
+				 displayFossGridDetails(eventList);
+			 }else{
+				 displayFossListDetails(eventList);
+			 }
 		 }
 
 		}else{
 			System.out.println("INTERNET OFF");
 		}		
-		//		   details.get(info.position).setLanguage(item.getTitle().toString());
-		//   	   Toast.makeText(ContentSample.this, "language"+details.get(info.position).getLanguage(), Toast.LENGTH_LONG).show();
-		//   	   ArrayList<SoftwareDetails> details2 = new ArrayList<SoftwareDetails>();
-		//	           if (item.getTitle() == "English") {
-		//	        	   
-		//	        	   mMenuDrawer.setContentView(R.layout.software_main);
-		//					SoftwareListView = (ListView) findViewById(R.id.SoftwareList);
-		//					flag = false;
-		//					
-		//					SoftwareDetails Detail1= new SoftwareDetails();
-		//		             Detail1.setSr_no(1);
-		//		             Detail1.setTitle(foss_name);
-		//		             Detail1.setLanguage(details.get(info.position).getLanguage());
-		//		             Detail1.setLevel("c2");
-		//		             Detail1.setTutorialname("Introduction");
-		//		             Detail1.setImageIcon(R.drawable.thump);
-		//		           
-		//		             details2.add(Detail1);
-		//	             
-		//					 SoftwareListView.setAdapter(new CustomAdapter(details2 , ContentSample.this));
-		//	                  }
-		//	            else if (item.getTitle() == "Hindi") {
-		//	            	
-		//	               //Do your working
-		//	                  }
-		//	            else if (item.getTitle() == "Marathi") {
-		//	                  //Do your working
-		//	              }
-		//	            else     {
-		//	                  return false;
-		//	                  }
+		//openOptionsMenu();
 		return true;
 	}
 
@@ -1044,5 +1134,6 @@ public class ContentSample extends Activity implements OnClickListener{
 
 		return new BitmapDrawable( getResources(), bitmapScaled );
 	}
-
+	
+	 
 }

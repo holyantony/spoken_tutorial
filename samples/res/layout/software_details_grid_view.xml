@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="match_parent"
+    android:orientation="horizontal" 
+    android:padding="2dp">
+    
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+   android:background="#DDDDDD">  
+
+    <ImageView
+        android:id="@+id/right_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginRight="6dp"
+        android:src="@drawable/thump" />
+
+    <LinearLayout
+        android:layout_width="284dp"
+        android:layout_height="wrap_content"
+        android:background="#DDDDDD"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/sr_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:text="Medium"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/soft_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:text="Medium Text"
+            android:textColor="#993300"
+            android:textSize="16dp" />
+
+        <!-- 
+        <TextView
+            android:id="@+id/soft_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Small Text"
+            android:textColor="#3300FF"
+            android:textSize="20dp" /> -->
+		 <TextView
+            android:id="@+id/soft_link"
+             android:layout_width="400dp"
+             android:layout_height="fill_parent"
+            android:layout_marginTop="3px"
+            android:text="Text"
+            android:textColor="#0481ab"
+            android:textSize="16dp"
+            android:singleLine="false"
+           />
+		 
+        <TextView
+            android:id="@+id/language"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:text="Small Text"
+            android:textColor="#003399"
+            android:textSize="16dp" 
+            android:layout_weight="1"/>
+
+       
+    </LinearLayout>
+  
+</LinearLayout>
+</LinearLayout>
