@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.app.LocalActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -51,6 +52,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -407,6 +409,40 @@ public class ContentSample extends Activity implements OnClickListener{
 //			        spec = tabHost.newTabSpec("Web").setIndicator("Web").setContent(intent);
 //			        tabHost.addTab(spec);
 			        
+			        
+			        tabHost.setOnTabChangedListener(new OnTabChangeListener() {
+						
+						@Override
+						public void onTabChanged(String tabId) {
+//							if("false".equals(status)){
+//								  builder = new AlertDialog.Builder(from_sdcard.this);
+//							        builder.setMessage("Rock player2 not installed,redirecting to play store!")
+//							                .setCancelable(false)
+//							                .setPositiveButton("Ok",
+//							                        new DialogInterface.OnClickListener() {
+//							                            public void onClick(DialogInterface dialog, int id) {
+//							                            	final String appName ="com.redirectin.rockplayer.android.unified.lite" ;
+//						   	                            	try {
+//							                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
+//							                            	} catch (android.content.ActivityNotFoundException anfe) {
+//							                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+//							                            	}
+//							                            }
+//							                        });
+//							                 
+//							        AlertDialog alert = builder.create();
+//							        alert.show();
+//								
+//							Toast.makeText(ContentSample.this, "Not installed", Toast.LENGTH_SHORT).show();
+//								
+//							}else {
+//								v.list_intent(position, from_sdcard.this);
+//
+//							}
+//							
+							
+						}
+					});
 			        
 			        
 

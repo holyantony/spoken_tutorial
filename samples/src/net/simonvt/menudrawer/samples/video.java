@@ -1,13 +1,17 @@
 package net.simonvt.menudrawer.samples;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -23,38 +27,34 @@ import android.widget.Toast;
 
 public class video extends Activity{
 	ArrayList<String> videoPath= new ArrayList<String>();
-	
-	   
+	static AlertDialog.Builder builder;
 	
 	ArrayList<String> vedio(String path_){
-		 File files = new File(path_);
-			// File files = new File("/mnt/sdcard/");
+		File files = new File(path_);
 
-			Log.i("files.........", files.toString());
-			try {
+		Log.i("files.........", files.toString());
+		try {
 
-				// String[] extensions = new String[] { "mp4", "3gp","ogv"
-				// };
-				String[] extensions = new String[] { "ogv" };
+			String[] extensions = new String[] { "ogv" };
 
-				System.out.println("Getting all .txt and .jsp files in "
-						+ files.getCanonicalPath()
-						+ " including those in subdirectories");
-				List<File> files1 = (List<File>) FileUtils.listFiles(files,
-						extensions, true);
-				for (File file : files1) {
-					System.out.println("file: " + file.getCanonicalPath());
-					videoPath.add(file.toString());
+			System.out.println("Getting all .txt and .jsp files in "
+					+ files.getCanonicalPath()
+					+ " including those in subdirectories");
+			List<File> files1 = (List<File>) FileUtils.listFiles(files,
+					extensions, true);
+			for (File file : files1) {
+				System.out.println("file: " + file.getCanonicalPath());
+				videoPath.add(file.toString());
 
-				}
-				
-				System.out.println("list:"+videoPath);
-
-			} catch (Exception e) {
-				// TODO: handle exception
 			}
 
-			return videoPath;
+			System.out.println("list:" + videoPath);
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return videoPath;
 	}
 	  
 	void list_intent(int position,Context context){
@@ -79,16 +79,26 @@ public class video extends Activity{
 		}
 	}
 	
+	String appInstalledOrNot(String uri,Context context)
+    {
+
+       PackageManager pm = context.getPackageManager();
+
+        String app_installed = "false";
+        try
+        {
+               pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+               app_installed = "true";
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+               app_installed = "false";
+        }
+        return app_installed ;
+}
 	
-	boolean isAppInstalled(String packageName) {
-		try {
-			ApplicationInfo info = getPackageManager().getApplicationInfo(
-					packageName, 0);
-			return true;
-		} catch (PackageManager.NameNotFoundException e) {
-			return false;
-		}
-	}
+	
+	
 	
 				
 }
