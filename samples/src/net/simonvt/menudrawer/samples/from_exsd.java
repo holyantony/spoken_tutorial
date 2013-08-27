@@ -50,7 +50,8 @@ public class from_exsd extends Activity{
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				status=v.appInstalledOrNot("com.redirectin.rockplayer.android.unified.lite",from_exsd.this);
+				//status=v.appInstalledOrNot("com.redirectin.rockplayer.android.unified.lite",from_exsd.this);
+				status=v.appInstalledOrNot("com.mxtech.videoplayer.ad",from_exsd.this);
 				System.out.println("status1:"+status);
 
 				if("false".equals(status)){
@@ -60,7 +61,7 @@ public class from_exsd extends Activity{
 				                .setPositiveButton("Ok",
 				                        new DialogInterface.OnClickListener() {
 				                            public void onClick(DialogInterface dialog, int id) {
-				                            	final String appName ="com.redirectin.rockplayer.android.unified.lite" ;
+				                            	final String appName ="com.mxtech.videoplayer.ad" ;
 				                            	try {
 				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
 				                            	} catch (android.content.ActivityNotFoundException anfe) {

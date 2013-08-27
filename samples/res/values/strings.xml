@@ -3,10 +3,9 @@
 
     <string name="app_name">Spoken Tutorials</string>
 
-    <string name="sample_content">Sample of dragging the content.\nThe menu consists of a ListView, for which the
-        active position is saved through configuration changes.\nAdditionally, if the menu is open, a back press will
-        close it.
-    </string>
+    <string name="sample_content">An initiative of National Mission on Education through ICT, Government of India, to promote IT literacy through Open Source Software.
+        
+    </string><string name="sample_use">To know more about this free service using audio-video tutorials just drag the entire window.\nand click on menu items.</string>
 
     <string name="sample_window">Sample of dragging the entire window.\nThe menu is a simple ScrollView, with a click
         listener set on each item.\nThe drawer will animate slightly open, to make it more discoverable.\nAdditionally,

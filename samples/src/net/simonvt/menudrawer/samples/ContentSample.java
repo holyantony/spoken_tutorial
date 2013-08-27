@@ -267,8 +267,8 @@ public class ContentSample extends Activity implements OnClickListener{
 				/*   
 				 * get the http response from server
 				 */
-				getResponseFromServer("http://10.118.248.195/check.php");
-				//getResponseFromServer("http://10.118.248.195/check.php");
+				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
 
 			}else if(position == 1){    
 				mMenuDrawer.setContentView(R.layout.contact);
@@ -280,8 +280,8 @@ public class ContentSample extends Activity implements OnClickListener{
 				/*
 				 * get the http response from server
 				 */
-				getResponseFromServer("http://10.118.248.195/check.php");
-				//getResponseFromServer("http://10.118.248.195/check.php");
+				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
 				final ImageView india = (ImageView)window_layout.findViewById(R.id.imageButton1);
 				final Bitmap bitmap = ((BitmapDrawable)india.getDrawable()).getBitmap();
 				india.setOnTouchListener(new OnTouchListener() { 
@@ -380,8 +380,8 @@ public class ContentSample extends Activity implements OnClickListener{
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query3)));
 				MYpostParameters.add(new BasicNameValuePair("query_no","3"));
-				getResponseFromServer("http://10.118.248.195/check.php");
-				//getResponseFromServer("http://10.118.248.195/check.php");
+				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
 
 			}else if (position==4) {
 				videoPath.clear();
@@ -1014,7 +1014,7 @@ public class ContentSample extends Activity implements OnClickListener{
 			to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_link,R.id.language};
 			fillMaps = new ArrayList<HashMap<String, String>>();
 			Drawable d = getResources().getDrawable(R.drawable.thump);
-			
+			if(event_row.size()!=0){
 			for(int i = 0; i < event_row.size(); i++){
 				int count = i;
 				HashMap<String, String> map = new HashMap<String, String>();
@@ -1027,6 +1027,10 @@ public class ContentSample extends Activity implements OnClickListener{
 				//map.put("imageid","" +getScaledIcon(d,100,100));
 				fillMaps.add(map);
 			}
+			}else
+			{
+				Toast.makeText(ContentSample.this, "Sorry!! No Tutorials are available", Toast.LENGTH_LONG).show();
+			}
 			adapterFossGridDetails(fillMaps, from, to);
 		}
 	private void displayFossListDetails(List<ArrayList<String>> event_row) {
@@ -1037,7 +1041,8 @@ public class ContentSample extends Activity implements OnClickListener{
 			from = new String[] {"srno", "fossname","level","language","tutorial","imageid"};
 			to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_level,R.id.language,R.id.soft_link,R.id.right_image};
 		    fillMaps = new ArrayList<HashMap<String, String>>();
-	
+	if(event_row.size()!=0)
+	{
 		for(int i = 0; i < event_row.size(); i++){
 			int count = i;
 			HashMap<String, String> map = new HashMap<String, String>();
@@ -1051,6 +1056,10 @@ public class ContentSample extends Activity implements OnClickListener{
 			fillMaps.add(map);
 		
 		
+		}
+	}else
+		{
+			Toast.makeText(ContentSample.this, "Sorry!! No Tutorials are available", Toast.LENGTH_LONG).show();
 		}
 		adapterFossListDetails(fillMaps, from, to);
 	}
@@ -1067,17 +1076,16 @@ public class ContentSample extends Activity implements OnClickListener{
 		foss_cat_list_view.setOnItemClickListener(new OnItemClickListener() {   
 			public void onItemClick(AdapterView a, View v, int position, long id) {
 
-				v.setLongClickable(false);
+				//v.setLongClickable(false);
 				foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
 				String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category = '"+foss_name +"' order by tr.language";
 				
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",query4));
 				MYpostParameters.add(new BasicNameValuePair("query_no","4"));
-				langflag = true;
 				
-				if(langflag==true)
-				{
+				
+			
 					// if internet is ON
 					if (isInternetOn()) {
 						
@@ -1086,14 +1094,17 @@ public class ContentSample extends Activity implements OnClickListener{
 						eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
 						if(eventList.size()==0)
 					   {
-							new GetHttpResponseAsync().execute("http://10.118.248.195/check.php");
+							new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
+							langflag = true;
+							
+					   }else{
+						   langflag =false;
 					   }
 
 					}else{
 						System.out.println("INTERNET OFF");
 					}		
 
-				}
 				openContextMenu(v);
 				
 			}
@@ -1145,7 +1156,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		  int count  = db.getTutorialCount(foss_name,item.getTitle().toString());  
 		  if(count <= 0)
 		  {
-			new GetHttpResponseAsync().execute("http://10.118.248.195/check.php");
+			new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
 		 }else{
 			 List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
 			 if(viewflag == true)
