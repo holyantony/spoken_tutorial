@@ -56,7 +56,7 @@ public class from_exsd extends Activity{
 
 				if("false".equals(status)){
 					  builder = new AlertDialog.Builder(from_exsd.this);
-				        builder.setMessage("Rock player2 not installed,redirecting to play store!")
+				        builder.setMessage("MX Player not installed,redirecting to play store!")
 				                .setCancelable(false)
 				                .setPositiveButton("Ok",
 				                        new DialogInterface.OnClickListener() {

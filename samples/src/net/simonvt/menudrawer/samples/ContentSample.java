@@ -376,7 +376,7 @@ public class ContentSample extends Activity implements OnClickListener{
 				mMenuDrawer.setContentView(R.layout.software_main); // set the main content view list row
 				foss_cat_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get the list row id 
 				// undo setting of this flag in registerForContextMenu
-			
+				
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query3)));
 				MYpostParameters.add(new BasicNameValuePair("query_no","3"));
@@ -874,7 +874,7 @@ public class ContentSample extends Activity implements OnClickListener{
 								db.addFossLanugaes(foss);
 								System.out.println("hello "+rows[i]);  
 							}
-								
+							
 						}else if (fossflag == true && langflag == false){
 						
 							for(int i=0;i<rows.length;i++){
@@ -958,8 +958,8 @@ public class ContentSample extends Activity implements OnClickListener{
 	}
 	public void adapterFoss(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
 	{
-		registerForContextMenu(foss_cat_list_view);
-		foss_cat_list_view.setLongClickable(false);  
+		
+		//foss_cat_list_view.setLongClickable(false);  
 		SimpleAdapter adapter; 
 		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_list_row, from, to);
 		foss_cat_list_view.setAdapter(adapter);
@@ -1077,15 +1077,13 @@ public class ContentSample extends Activity implements OnClickListener{
 			public void onItemClick(AdapterView a, View v, int position, long id) {
 
 				//v.setLongClickable(false);
+				
 				foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
 				String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category = '"+foss_name +"' order by tr.language";
 				
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",query4));
 				MYpostParameters.add(new BasicNameValuePair("query_no","4"));
-				
-				
-			
 					// if internet is ON
 					if (isInternetOn()) {
 						
@@ -1094,18 +1092,23 @@ public class ContentSample extends Activity implements OnClickListener{
 						eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
 						if(eventList.size()==0)
 					   {
+							registerForContextMenu(foss_cat_list_view);
 							new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
 							langflag = true;
 							
+							
 					   }else{
+						   registerForContextMenu(foss_cat_list_view);
 						   langflag =false;
+						   v.setLongClickable(false);
+						   openContextMenu(v);
 					   }
 
 					}else{
 						System.out.println("INTERNET OFF");
 					}		
 
-				openContextMenu(v);
+				
 				
 			}
 			
