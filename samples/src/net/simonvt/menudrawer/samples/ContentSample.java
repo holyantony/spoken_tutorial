@@ -5,6 +5,7 @@ import net.simonvt.menudrawer.MenuDrawer;
 import android.app.Activity; 
 import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.LocalActivityManager;
 import android.content.ContentValues;
@@ -113,6 +114,8 @@ public class ContentSample extends Activity implements OnClickListener{
 	String[] SubtitleStringArray;
 	AdapterView.AdapterContextMenuInfo info ;
 	ArrayList<String> videoPath= new ArrayList<String>();
+    video v=new video();
+
 	@Override
 	protected void onCreate(Bundle inState) {
 		super.onCreate(inState);
@@ -996,11 +999,32 @@ public class ContentSample extends Activity implements OnClickListener{
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int pos, long arg3) {
-				String url = "http://video.spoken-tutorial.org/"+event_row.get(pos).get(4);
-				Intent intent_browser = new Intent(Intent.ACTION_VIEW);
-				intent_browser.setClassName("org.mozilla.firefox", "org.mozilla.firefox.App");
-				intent_browser.setData(Uri.parse(url));
-				startActivity(intent_browser);
+				String status = v.appInstalledOrNot("org.mozilla.firefox",ContentSample.this);
+				System.out.println("status1:"+status);
+				if("false".equals(status)){ 
+					  Builder builder = new AlertDialog.Builder(ContentSample.this);
+				        builder.setMessage("Firefox not installed,redirecting to play store!")
+				                .setCancelable(false)
+				                .setPositiveButton("Ok",
+				                        new DialogInterface.OnClickListener() {
+				                            public void onClick(DialogInterface dialog, int id) {
+				                            	final String appName ="org.mozilla.firefox" ;
+				                            	try {
+				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
+				                            	} catch (android.content.ActivityNotFoundException anfe) {
+				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+				                            	}
+				                            }
+				                        });
+				                 
+				        AlertDialog alert = builder.create();
+				        alert.show();
+					
+					
+				}else {
+					v.intend_video(event_row, pos);
+
+				}
 			}
 		});
 
@@ -1024,17 +1048,69 @@ public class ContentSample extends Activity implements OnClickListener{
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int pos, long arg3) {
-				String url = "http://video.spoken-tutorial.org/"+event_row.get(pos).get(4);
-				Intent intent_browser = new Intent(Intent.ACTION_VIEW);
-				intent_browser.setClassName("org.mozilla.firefox", "org.mozilla.firefox.App");
-				intent_browser.setData(Uri.parse(url));
-				startActivity(intent_browser);
+				String status = v.appInstalledOrNot("org.mozilla.firefox",ContentSample.this);
+				System.out.println("status1:"+status);
+				if("false".equals(status)){
+					  Builder builder = new AlertDialog.Builder(ContentSample.this);
+				        builder.setMessage("Firefox not installed,redirecting to play store!")
+				                .setCancelable(false)
+				                .setPositiveButton("Ok",
+				                        new DialogInterface.OnClickListener() {
+				                            public void onClick(DialogInterface dialog, int id) {
+				                            	final String appName ="org.mozilla.firefox" ;
+				                            	try {
+				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
+				                            	} catch (android.content.ActivityNotFoundException anfe) {
+				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+				                            	}
+				                            }
+				                        });
+				                 
+				        AlertDialog alert = builder.create();
+				        alert.show();
+					
+					
+				}else {
+					v.intend_video(event_row, pos);
+
+				}
+
 			}
 		});
 		LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
 		parent.setVisibility(View.GONE);
 		viewflag = false;
 
+	}
+	
+	void video_intend(List<ArrayList<String>> list1 ,int pos1){
+		String status = v.appInstalledOrNot("org.mozilla.firefox",ContentSample.this);
+		System.out.println("status1:"+status);
+		if("false".equals(status)){
+			  Builder builder = new AlertDialog.Builder(ContentSample.this);
+		        builder.setMessage("Firefox not installed,redirecting to play store!")
+		                .setCancelable(false)
+		                .setPositiveButton("Ok",
+		                        new DialogInterface.OnClickListener() {
+		                            public void onClick(DialogInterface dialog, int id) {
+		                            	final String appName ="org.mozilla.firefox" ;
+		                            	try {
+		                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
+		                            	} catch (android.content.ActivityNotFoundException anfe) {
+		                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+		                            	}
+		                            }
+		                        });
+		                 
+		        AlertDialog alert = builder.create();
+		        alert.show();
+			
+		Toast.makeText(ContentSample.this, "Not installed", Toast.LENGTH_SHORT).show();
+			
+		}else {
+			v.intend_video(list1, pos1);
+
+		}
 	}
 
 	private void displayFossGridDetails(List<ArrayList<String>> event_row) {

@@ -97,7 +97,13 @@ public class video extends Activity{
         return app_installed ;
 }
 	
-	
+	void intend_video(List<ArrayList<String>> list ,int pos){
+		String url = "http://video.spoken-tutorial.org/"+list.get(pos).get(4);
+		Intent intent_browser = new Intent(Intent.ACTION_VIEW);
+		intent_browser.setClassName("org.mozilla.firefox", "org.mozilla.firefox.App");
+		intent_browser.setData(Uri.parse(url));
+		startActivity(intent_browser);
+	}
 	
 	
 				
