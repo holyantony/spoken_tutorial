@@ -1,9 +1,12 @@
 <?php
 $query=$_POST['query'];
+//$query = "select distinct tr.language from cdeep.tutorial_resources tr, cdeep.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category='Linux' order by tr.language";
 $query_number=$_POST['query_no'];
 //echo "my query" . $que;
 //$pw=$_POST['password'];
 //connect to the db
+//$query_number= "5";
+//$query =  "select tr.tutorial_video,td.foss_category,tr.language, td.tutorial_level, td.tutorial_name, td.order_code from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='English'and td.foss_category='Linux' ORDER BY td.tutorial_level, td.order_code ASC";
 $user = 'root';
 $pswd = 'root';
 $db = 'workshop';
@@ -22,6 +25,7 @@ if (mysqli_connect_errno())
 
 $result = mysqli_query($con,$query);
 
+
 while($row = mysqli_fetch_array($result))
   {
   switch ($query_number) {
@@ -33,7 +37,16 @@ while($row = mysqli_fetch_array($result))
         echo "[" . "(" . $row['name'] . ")" . "(" . $row['rp_fname'] . ")" . "(" . $row['phone'] . ")" . "(" . $row['mail'] . ")" . "]";
 	echo "<br>";
         break;
-  }
+    case "3":
+        echo "[". $row['foss_category'] ."]";
+        break;
+    case "4":
+        echo "[". $row['language'] . "]";
+        break;
+    case "5":
+	echo "[". $row['foss_category'].",".$row['language'].",".$row['tutorial_level'].",".$row['tutorial_name'].",".$row['tutorial_video']."]";
+	
+	}
   }
 //echo $array[0];
 
