@@ -41,6 +41,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -111,7 +112,7 @@ public class ContentSample extends Activity implements OnClickListener{
 	int image_id;
 	String[] SubtitleStringArray;
 	AdapterView.AdapterContextMenuInfo info ;
-    ArrayList<String> videoPath= new ArrayList<String>();
+	ArrayList<String> videoPath= new ArrayList<String>();
 	@Override
 	protected void onCreate(Bundle inState) {
 		super.onCreate(inState);
@@ -199,7 +200,7 @@ public class ContentSample extends Activity implements OnClickListener{
 			eventList = db.getAllFossCat();
 			System.out.println("foss category "+eventList);
 
-			
+
 		}
 		if(eventList.size() != 0){
 			//try {
@@ -207,10 +208,10 @@ public class ContentSample extends Activity implements OnClickListener{
 			if(mActivePosition == 0){
 				displayEvents(eventList);
 			}else if(mActivePosition == 3){
-				
+
 				displayFoss(eventList);
 
-				
+
 			}
 			//} catch (Exception e) {
 			//System.out.println("EXCEPTION: "+e.getMessage().toString());
@@ -376,7 +377,7 @@ public class ContentSample extends Activity implements OnClickListener{
 				mMenuDrawer.setContentView(R.layout.software_main); // set the main content view list row
 				foss_cat_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get the list row id 
 				// undo setting of this flag in registerForContextMenu
-				
+
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query3)));
 				MYpostParameters.add(new BasicNameValuePair("query_no","3"));
@@ -386,65 +387,65 @@ public class ContentSample extends Activity implements OnClickListener{
 			}else if (position==4) {
 				videoPath.clear();
 				mMenuDrawer.setContentView(R.layout.tab); // set the main
-				 Resources res = getResources();
-			        LocalActivityManager mlam = new LocalActivityManager(ContentSample.this, true);
-			        final TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
-			        
-			        Bundle savedInstanceState = null;
-					mlam.dispatchCreate(savedInstanceState);
-			        tabHost.setup(mlam );
-			        TabHost.TabSpec spec;
-			        Intent intent;
+				Resources res = getResources();
+				LocalActivityManager mlam = new LocalActivityManager(ContentSample.this, true);
+				final TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
 
-			        intent = new Intent(ContentSample.this, from_sdcard.class);	
-			        spec = tabHost.newTabSpec("Internal Sdcard").setIndicator("Internal Sdcard").setContent(intent);
-			        tabHost.addTab(spec);
+				Bundle savedInstanceState = null;
+				mlam.dispatchCreate(savedInstanceState);
+				tabHost.setup(mlam );
+				TabHost.TabSpec spec;
+				Intent intent;
 
-			   
-			        intent = new Intent(ContentSample.this, from_exsd.class);	
-			        spec = tabHost.newTabSpec("External Sdcard").setIndicator("External Sdcard").setContent(intent);
-			        tabHost.addTab(spec);
-			        
-//			        intent = new Intent(ContentSample.this, from_web.class);	
-//			        spec = tabHost.newTabSpec("Web").setIndicator("Web").setContent(intent);
-//			        tabHost.addTab(spec);
-			        
-			        
-			        tabHost.setOnTabChangedListener(new OnTabChangeListener() {
-						
-						@Override
-						public void onTabChanged(String tabId) {
-//							if("false".equals(status)){
-//								  builder = new AlertDialog.Builder(from_sdcard.this);
-//							        builder.setMessage("Rock player2 not installed,redirecting to play store!")
-//							                .setCancelable(false)
-//							                .setPositiveButton("Ok",
-//							                        new DialogInterface.OnClickListener() {
-//							                            public void onClick(DialogInterface dialog, int id) {
-//							                            	final String appName ="com.redirectin.rockplayer.android.unified.lite" ;
-//						   	                            	try {
-//							                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
-//							                            	} catch (android.content.ActivityNotFoundException anfe) {
-//							                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
-//							                            	}
-//							                            }
-//							                        });
-//							                 
-//							        AlertDialog alert = builder.create();
-//							        alert.show();
-//								
-//							Toast.makeText(ContentSample.this, "Not installed", Toast.LENGTH_SHORT).show();
-//								
-//							}else {
-//								v.list_intent(position, from_sdcard.this);
-//
-//							}
-//							
-							
-						}
-					});
-			        
-			        
+				intent = new Intent(ContentSample.this, from_sdcard.class);	
+				spec = tabHost.newTabSpec("Internal Sdcard").setIndicator("Internal Sdcard").setContent(intent);
+				tabHost.addTab(spec);
+
+
+				intent = new Intent(ContentSample.this, from_exsd.class);	
+				spec = tabHost.newTabSpec("External Sdcard").setIndicator("External Sdcard").setContent(intent);
+				tabHost.addTab(spec);
+
+				//			        intent = new Intent(ContentSample.this, from_web.class);	
+				//			        spec = tabHost.newTabSpec("Web").setIndicator("Web").setContent(intent);
+				//			        tabHost.addTab(spec);
+
+
+				tabHost.setOnTabChangedListener(new OnTabChangeListener() {
+
+					@Override
+					public void onTabChanged(String tabId) {
+						//							if("false".equals(status)){
+						//								  builder = new AlertDialog.Builder(from_sdcard.this);
+						//							        builder.setMessage("Rock player2 not installed,redirecting to play store!")
+						//							                .setCancelable(false)
+						//							                .setPositiveButton("Ok",
+						//							                        new DialogInterface.OnClickListener() {
+						//							                            public void onClick(DialogInterface dialog, int id) {
+						//							                            	final String appName ="com.redirectin.rockplayer.android.unified.lite" ;
+						//						   	                            	try {
+						//							                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
+						//							                            	} catch (android.content.ActivityNotFoundException anfe) {
+						//							                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+						//							                            	}
+						//							                            }
+						//							                        });
+						//							                 
+						//							        AlertDialog alert = builder.create();
+						//							        alert.show();
+						//								
+						//							Toast.makeText(ContentSample.this, "Not installed", Toast.LENGTH_SHORT).show();
+						//								
+						//							}else {
+						//								v.list_intent(position, from_sdcard.this);
+						//
+						//							}
+						//							
+
+					}
+				});
+
+
 
 			}
 
@@ -461,46 +462,46 @@ public class ContentSample extends Activity implements OnClickListener{
 		outState.putInt(STATE_ACTIVE_POSITION, mActivePosition);
 		outState.putString(STATE_CONTENT_TEXT, mContentText);
 	}
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// 'Help' menu to 66666main page options menu
-//		
-//		//menu.add(1,1,1,"Help");
-//		
-//			//menu.add(1,2,2,"Import");
-//			//menu.add(1,3,3,"Set IP");
-//		if(gridview == true)
-//		{
-//			menu.add(1,1,1,"list view");	
-//			//Drawable d = getResources().getDrawable(R.drawable.call_logo);
-//			//m1.setIcon(getScaledIcon(d,45,45));
-//			
-//		}else
-//		{
-//			//m1.setIcon(R.drawable.call_logo);
-//			menu.add(1,1,1,"grid view");
-//		}
-//	//return true;
-//	return super.onCreateOptionsMenu(menu);	
-//		//return super.onCreateOptionsMenu(menu);	
-//	}
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		// 'Help' menu to 66666main page options menu
+	//		
+	//		//menu.add(1,1,1,"Help");
+	//		
+	//			//menu.add(1,2,2,"Import");
+	//			//menu.add(1,3,3,"Set IP");
+	//		if(gridview == true)
+	//		{
+	//			menu.add(1,1,1,"list view");	
+	//			//Drawable d = getResources().getDrawable(R.drawable.call_logo);
+	//			//m1.setIcon(getScaledIcon(d,45,45));
+	//			
+	//		}else
+	//		{
+	//			//m1.setIcon(R.drawable.call_logo);
+	//			menu.add(1,1,1,"grid view");
+	//		}
+	//	//return true;
+	//	return super.onCreateOptionsMenu(menu);	
+	//		//return super.onCreateOptionsMenu(menu);	
+	//	}
 	@Override
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
-	menu.clear();
+		menu.clear();
 
-	if(viewflag) {
+		if(viewflag) {
 
-	menu.add(1,1,1,"list view");
+			menu.add(1,1,1,"list view");
 
-	} else {
+		} else {
 
-	menu.add(2,2,2,"grid view");
+			menu.add(2,2,2,"grid view");
 
-	}
+		}
 
-	return super.onPrepareOptionsMenu(menu);
+		return super.onPrepareOptionsMenu(menu);
 
 	}
 	@Override
@@ -512,14 +513,14 @@ public class ContentSample extends Activity implements OnClickListener{
 			mMenuDrawer.toggleMenu();
 			return true;
 		case 1:
-			
-			 List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
-			 displayFossListDetails(eventList);
+
+			List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
+			displayFossListDetails(eventList);
 			break;
 		case 2:
-			
-			 List<ArrayList<String>> eventlist = db.getTutorialList(foss_name,language);
-			 displayFossGridDetails(eventlist);
+
+			List<ArrayList<String>> eventlist = db.getTutorialList(foss_name,language);
+			displayFossGridDetails(eventlist);
 			break;
 		}
 
@@ -846,7 +847,7 @@ public class ContentSample extends Activity implements OnClickListener{
 
 		public void onPostExecute(String unused) {
 			try {
-				
+
 				System.out.println("RESULT is"+result);
 				boolean a = false , b = false;
 				List<ArrayList<String>> eventList1 = new ArrayList<ArrayList<String>>();
@@ -865,47 +866,47 @@ public class ContentSample extends Activity implements OnClickListener{
 						db.addContactPerson(new Contacts(row[0],row[1],row[3],row[2]));
 					}
 				}else if (mActivePosition == 3){   
-					
-				
-						if(langflag == true)
-						{
-							for(int i=0;i<rows.length;i++){
-								FossCategory foss = new FossCategory(foss_name,rows[i]);
-								db.addFossLanugaes(foss);
-								System.out.println("hello "+rows[i]);  
-							}
-							
-						}else if (fossflag == true && langflag == false){
-						
-							for(int i=0;i<rows.length;i++){
-								FossCategory foss = new FossCategory(dr[i],rows[i]);
-								db.addFossCategory(foss);
-							}
-							List<String> eventList = Arrays.asList(rows);  
-							displayFoss(eventList);  
-							
+
+
+					if(langflag == true)
+					{
+						for(int i=0;i<rows.length;i++){
+							FossCategory foss = new FossCategory(foss_name,rows[i]);
+							db.addFossLanugaes(foss);
+							System.out.println("hello "+rows[i]);  
 						}
-						if(fossflag == false && langflag == false)
-						{
-							for(int i=0;i<rows.length;i++){
-								String[] rows1 = rows[i].split(",");
-								FossCategory foss = new FossCategory(rows1[0],rows1[1],rows1[2],rows1[3],rows1[4]);
-								List <String>List = new ArrayList<String>();
-								db.addFossTutorials(foss);
-								for(int j = 0 ; j < rows1.length ;j++)
-								{
-									List.add(rows1[j]);
-								}
-								eventList1.add((ArrayList<String>) List);
-							}
-							if(viewflag == true)
-							{
-								displayFossGridDetails(eventList1);  
-							}else
-							{
-								displayFossListDetails(eventList1);  
-							}
+
+					}else if (fossflag == true && langflag == false){
+
+						for(int i=0;i<rows.length;i++){
+							FossCategory foss = new FossCategory(dr[i],rows[i]);
+							db.addFossCategory(foss);
 						}
+						List<String> eventList = Arrays.asList(rows);  
+						displayFoss(eventList);  
+
+					}
+					if(fossflag == false && langflag == false)
+					{
+						for(int i=0;i<rows.length;i++){
+							String[] rows1 = rows[i].split(",");
+							FossCategory foss = new FossCategory(rows1[0],rows1[1],rows1[2],rows1[3],rows1[4]);
+							List <String>List = new ArrayList<String>();
+							db.addFossTutorials(foss);
+							for(int j = 0 ; j < rows1.length ;j++)
+							{
+								List.add(rows1[j]);
+							}
+							eventList1.add((ArrayList<String>) List);
+						}
+						if(viewflag == true)
+						{
+							displayFossGridDetails(eventList1);  
+						}else
+						{
+							displayFossListDetails(eventList1);  
+						}
+					}
 				}
 			} catch (Exception e) {
 				System.out.println("ERROR"+e.getMessage().toString());
@@ -927,7 +928,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		for(int i = 0; i < event_row.size(); i++){
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("rowid", "" + event_row.get(i));
-			
+
 			fillMaps.add(map);
 		}
 
@@ -938,13 +939,13 @@ public class ContentSample extends Activity implements OnClickListener{
 		parent.setVisibility(View.GONE);
 
 	}
-	
+
 	private void displayFoss(List<String> event_row) {
 		String[] from = new String[] {"iamgeid", "foss","subtitle"};
 		int[] to = new int[] {R.id.image_id, R.id.soft_title,R.id.soft_sub_title};
 
 		final List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
-	
+
 		for(int i = 0; i < event_row.size(); i++){
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("iamgeid", "" + dr[i]);
@@ -954,11 +955,11 @@ public class ContentSample extends Activity implements OnClickListener{
 		}
 		adapterFoss(fillMaps,from,to);
 		listenerOnFossCategoryListView();
-	
+
 	}
 	public void adapterFoss(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
 	{
-		
+
 		//foss_cat_list_view.setLongClickable(false);  
 		SimpleAdapter adapter; 
 		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_list_row, from, to);
@@ -966,55 +967,85 @@ public class ContentSample extends Activity implements OnClickListener{
 		LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
 		parent.setVisibility(View.GONE);
 		//registerForContextMenu(foss_cat_list_view);
-		
+
 	}
-	public void adapterFossGridDetails(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
+	public void adapterFossGridDetails(List<HashMap<String, String>> fillMaps , String[] from,int[] to, final List<ArrayList<String>> event_row)
 	{   
 		mMenuDrawer.setContentView(R.layout.grid_foss_details); // set the main content view list row
-			foss_details_grid_view = (GridView) findViewById(R.id.gridview1); // get the list row id 
-			
-			//ImageView ivList = (ImageView) findViewById(R.id.tvList);
-			//ImageView ivGrid = (ImageView) findViewById(R.id.tvGrid);
-			/*ivList.setOnClickListener(new OnClickListener() {
-				
+		foss_details_grid_view = (GridView) findViewById(R.id.gridview1); // get the list row id 
+
+		//ImageView ivList = (ImageView) findViewById(R.id.tvList);
+		//ImageView ivGrid = (ImageView) findViewById(R.id.tvGrid);
+		/*ivList.setOnClickListener(new OnClickListener() {
+
 				@Override
 				public void onClick(View arg0) {
 					// TODO Auto-generated method stub
-					
+
 				}
 			});*/
-			SimpleAdapter adapter; 
-	
-			adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_grid_view, from, to);
-			foss_details_grid_view.setAdapter(adapter);
-			//LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
-			//parent.setVisibility(View.GONE);
-			viewflag = true;
-		}
-	public void adapterFossListDetails(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
+		SimpleAdapter adapter; 
+
+		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_grid_view, from, to);
+		foss_details_grid_view.setAdapter(adapter);
+		/*
+		 * get the tutorial link and open in firefox browser
+		 */
+		foss_details_grid_view.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int pos, long arg3) {
+				String url = "http://video.spoken-tutorial.org/"+event_row.get(pos).get(4);
+				Intent intent_browser = new Intent(Intent.ACTION_VIEW);
+				intent_browser.setClassName("org.mozilla.firefox", "org.mozilla.firefox.App");
+				intent_browser.setData(Uri.parse(url));
+				startActivity(intent_browser);
+			}
+		});
+
+		viewflag = true;
+	}
+	public void adapterFossListDetails(List<HashMap<String, String>> fillMaps , 
+			String[] from,int[] to, final List<ArrayList<String>> event_row)
 	{   
-		
-			mMenuDrawer.setContentView(R.layout.software_main); // set the main content view list row
-			foss_details_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get the list row id 
-			SimpleAdapter adapter; 
-			
-			adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_row, from, to);
-			foss_details_list_view.setAdapter(adapter);
-			LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
-			parent.setVisibility(View.GONE);
-			viewflag = false;
-		
-		}
-	
+
+		mMenuDrawer.setContentView(R.layout.software_main); // set the main content view list row
+		foss_details_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get the list row id 
+		SimpleAdapter adapter; 
+
+		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_row, from, to);
+		foss_details_list_view.setAdapter(adapter);
+		/*
+		 * get the tutorial link and open in firefox browser
+		 */
+		foss_details_list_view.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int pos, long arg3) {
+				String url = "http://video.spoken-tutorial.org/"+event_row.get(pos).get(4);
+				Intent intent_browser = new Intent(Intent.ACTION_VIEW);
+				intent_browser.setClassName("org.mozilla.firefox", "org.mozilla.firefox.App");
+				intent_browser.setData(Uri.parse(url));
+				startActivity(intent_browser);
+			}
+		});
+		LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
+		parent.setVisibility(View.GONE);
+		viewflag = false;
+
+	}
+
 	private void displayFossGridDetails(List<ArrayList<String>> event_row) {
 		final List<HashMap<String, String>> fillMaps;
 		String[] from;
 		int[] to;
 		from = new String[] {"srno", "fossname","tutorial","language"};
-			to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_link,R.id.language};
-			fillMaps = new ArrayList<HashMap<String, String>>();
-			Drawable d = getResources().getDrawable(R.drawable.thump);
-			if(event_row.size()!=0){
+		to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_link,R.id.language};
+		fillMaps = new ArrayList<HashMap<String, String>>();
+		Drawable d = getResources().getDrawable(R.drawable.thump);
+		if(event_row.size()!=0){
 			for(int i = 0; i < event_row.size(); i++){
 				int count = i;
 				HashMap<String, String> map = new HashMap<String, String>();
@@ -1027,44 +1058,44 @@ public class ContentSample extends Activity implements OnClickListener{
 				//map.put("imageid","" +getScaledIcon(d,100,100));
 				fillMaps.add(map);
 			}
-			}else
-			{
-				Toast.makeText(ContentSample.this, "Sorry!! No Tutorials are available", Toast.LENGTH_LONG).show();
-			}
-			adapterFossGridDetails(fillMaps, from, to);
+		}else
+		{
+			Toast.makeText(ContentSample.this, "Sorry!! No Tutorials are available", Toast.LENGTH_LONG).show();
 		}
+		adapterFossGridDetails(fillMaps, from, to, event_row);
+	}
 	private void displayFossListDetails(List<ArrayList<String>> event_row) {
 		final List<HashMap<String, String>> fillMaps;
 		String[] from;
 		int[] to;
-		
-			from = new String[] {"srno", "fossname","level","language","tutorial","imageid"};
-			to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_level,R.id.language,R.id.soft_link,R.id.right_image};
-		    fillMaps = new ArrayList<HashMap<String, String>>();
-	if(event_row.size()!=0)
-	{
-		for(int i = 0; i < event_row.size(); i++){
-			int count = i;
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("srno", "" + ++count);  
-			map.put("fossname", "" +  event_row.get(i).get(0));  // foss category name
-			map.put("level","" +  event_row.get(i).get(1));  // level like c2 c3 ...
-			map.put("language", "" +  event_row.get(i).get(2)); // selected language like English , Hindi ...
-			map.put("tutorial", "" +  event_row.get(i).get(3)); // Tutorial Name 
-			// event_row.get(4); //  link for video 
-			map.put("imageid","" +R.drawable.thump);
-			fillMaps.add(map);
-		
-		
-		}
-	}else
+
+		from = new String[] {"srno", "fossname","level","language","tutorial","imageid"};
+		to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_level,R.id.language,R.id.soft_link,R.id.right_image};
+		fillMaps = new ArrayList<HashMap<String, String>>();
+		if(event_row.size()!=0)
+		{
+			for(int i = 0; i < event_row.size(); i++){
+				int count = i;
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("srno", "" + ++count);  
+				map.put("fossname", "" +  event_row.get(i).get(0));  // foss category name
+				map.put("level","" +  event_row.get(i).get(1));  // level like c2 c3 ...
+				map.put("language", "" +  event_row.get(i).get(2)); // selected language like English , Hindi ...
+				map.put("tutorial", "" +  event_row.get(i).get(3)); // Tutorial Name 
+				// event_row.get(4); //  link for video 
+				map.put("imageid","" +R.drawable.thump);
+				fillMaps.add(map);
+
+
+			}
+		}else
 		{
 			Toast.makeText(ContentSample.this, "Sorry!! No Tutorials are available", Toast.LENGTH_LONG).show();
 		}
-		adapterFossListDetails(fillMaps, from, to);
+		adapterFossListDetails(fillMaps, from, to, event_row);
 	}
-		
-	
+
+
 
 	@Override
 	public void onClick(View v) {
@@ -1077,41 +1108,41 @@ public class ContentSample extends Activity implements OnClickListener{
 			public void onItemClick(AdapterView a, View v, int position, long id) {
 
 				//v.setLongClickable(false);
-				
+
 				foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
 				String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category = '"+foss_name +"' order by tr.language";
-				
+
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",query4));
 				MYpostParameters.add(new BasicNameValuePair("query_no","4"));
-					// if internet is ON
-					if (isInternetOn()) {
-						
-						System.out.println("INTERNET ON");
-						List<String> eventList = null;
-						eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
-						if(eventList.size()==0)
-					   {
-							registerForContextMenu(foss_cat_list_view);
-							new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
-							langflag = true;
-							
-							
-					   }else{
-						   registerForContextMenu(foss_cat_list_view);
-						   langflag =false;
-						   v.setLongClickable(false);
-						   openContextMenu(v);
-					   }
+				// if internet is ON
+				if (isInternetOn()) {
+
+					System.out.println("INTERNET ON");
+					List<String> eventList = null;
+					eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
+					if(eventList.size()==0)
+					{
+						registerForContextMenu(foss_cat_list_view);
+						new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
+						langflag = true;
+
 
 					}else{
-						System.out.println("INTERNET OFF");
-					}		
+						registerForContextMenu(foss_cat_list_view);
+						langflag =false;
+						v.setLongClickable(false);
+						openContextMenu(v);
+					}
 
-				
-				
+				}else{
+					System.out.println("INTERNET OFF");
+				}		
+
+
+
 			}
-			
+
 		});
 
 	}
@@ -1128,14 +1159,14 @@ public class ContentSample extends Activity implements OnClickListener{
 		menu.setHeaderTitle("Select language for "+foss_name+" video tutorial");  
 		List<String> eventList = null;
 		eventList = db.getAllFossLanguage(foss_name);
-		 
+
 		for(int i=0;i<eventList.size();i++){
-			
+
 			//System.out.println("foss category "+eventList.get(i));
 			menu.add(Menu.NONE, v.getId(), 0, eventList.get(i).toString());
 		}
-		
- 
+
+
 	}
 
 	@Override
@@ -1144,7 +1175,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		//foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
 		System.out.println("foss name for getting on item click"+foss_name);
 		System.out.println("language for getting on item click"+item.getTitle());
-		
+
 		String query5="select td.foss_category,tr.language,td.tutorial_level, td.tutorial_name ,tr.tutorial_video from CDEEP.tutorial_resources tr,CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='"+item.getTitle()+"'and td.foss_category='"+foss_name+"' ORDER BY td.tutorial_level, td.order_code ASC";
 		System.out.println("query 5 "+query5);    
 		langflag = false;
@@ -1156,19 +1187,19 @@ public class ContentSample extends Activity implements OnClickListener{
 		if (isInternetOn()) {  
 			System.out.println("INTERNET ON");
 			//List<String> eventList = null;
-		  int count  = db.getTutorialCount(foss_name,item.getTitle().toString());  
-		  if(count <= 0)
-		  {
-			new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
-		 }else{
-			 List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
-			 if(viewflag == true)
-			 {
-				 displayFossGridDetails(eventList);
-			 }else{
-				 displayFossListDetails(eventList);
-			 }
-		 }
+			int count  = db.getTutorialCount(foss_name,item.getTitle().toString());  
+			if(count <= 0)
+			{
+				new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
+			}else{
+				List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
+				if(viewflag == true)
+				{
+					displayFossGridDetails(eventList);
+				}else{
+					displayFossListDetails(eventList);
+				}
+			}
 
 		}else{
 			System.out.println("INTERNET OFF");
@@ -1184,6 +1215,6 @@ public class ContentSample extends Activity implements OnClickListener{
 
 		return new BitmapDrawable( getResources(), bitmapScaled );
 	}
-	
-	 
+
+
 }

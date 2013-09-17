@@ -332,7 +332,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 					FossLangList.add(cursor.getString(2).toString());
 					FossLangList.add(cursor.getString(3).toString());
 					FossLangList.add(cursor.getString(4).toString());
-					//FossLangList.add(cursor.getString(5).toString());    
+					FossLangList.add(cursor.getString(5).toString());    
 					ListOfFossLangList.add((ArrayList<String>) FossLangList);
 				} while (cursor.moveToNext());
 				
