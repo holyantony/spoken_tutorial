@@ -40,6 +40,7 @@
         
     <string-array name="software_subtitle">
         <item>Advanced c c++</item>
+        <item >Command language interpreter</item>
         <item>Blender is a free open source 3D graphics application, available under the GNU General Public License for the Linux, Mac OS X, FreeBSD, OpenBSD and Microsoft Windows operating systems. </item>
         <item>Powerful features, simple syntax, and portability make C a preferred language among programmers for business and industrial applications</item>
  	    <item>CellDesigner is a SBML compliant software , it is process diagram editor for drawing gene-regulatory and biochemical networks</item>

@@ -2,10 +2,10 @@ package net.simonvt.menudrawer.samples;
 
 import net.simonvt.menudrawer.MenuDrawer;
 
+import android.animation.AnimatorSet.Builder;
 import android.app.Activity; 
 import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.LocalActivityManager;
 import android.content.ContentValues;
@@ -115,76 +115,103 @@ public class ContentSample extends Activity implements OnClickListener{
 	AdapterView.AdapterContextMenuInfo info ;
 	ArrayList<String> videoPath= new ArrayList<String>();
     video v=new video();
-
+    AlertDialog.Builder builder;
 	@Override
 	protected void onCreate(Bundle inState) {
 		super.onCreate(inState);
 
-		if (inState != null) {
-			mActivePosition = inState.getInt(STATE_ACTIVE_POSITION);
-			mContentText = inState.getString(STATE_CONTENT_TEXT);
-		}
+		String status=v.appInstalledOrNot("org.mozilla.firefox",ContentSample.this);
+		System.out.println("status1:"+status);
+		Toast.makeText(ContentSample.this, "Status:"+status, Toast.LENGTH_SHORT).show();
+		if("false".equals(status)){
 
-		db = new DatabaseHandler(ContentSample.this);
-
-		mMenuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_CONTENT);
-		mMenuDrawer.setContentView(R.layout.activity_contentsample);
-		mMenuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
-		SubtitleStringArray = getResources().getStringArray(R.array.software_subtitle);
-
-		dr = new int[]{R.drawable.advanced_cpp,R.drawable.blender,R.drawable.c_and_cpp,
-				R.drawable.cell_designer,R.drawable.digital_divide
-				,R.drawable.drupal,R.drawable.firefox,R.drawable.gchempaint,
-				R.drawable.geogebra, R.drawable.geogebra_for_engineering_drawing,R.drawable.gimp
-				,R.drawable.gns3,R.drawable.gschem,R.drawable.java,R.drawable.kicad,
-				R.drawable.ktouch,R.drawable.kturtal
-				,R.drawable.latex,R.drawable.libre_office_base_icon_gs_base,R.drawable.libre_office_calc_icon_gs_calc,
-				R.drawable.libre_office_draw_icon_gs_draw,R.drawable.libre_office_impress_icon_gs_impress,
-				R.drawable.libre_office_math_icon_gs_math,R.drawable.libre_office_writer_icon_gs_writer
-				,R.drawable.linux,R.drawable.netbeans,R.drawable.ngspice,R.drawable.openfoam_ogo,
-				R.drawable.orca,R.drawable.perl,R.drawable.php_mysql,R.drawable.python,R.drawable.python,
-				R.drawable.qcad,R.drawable.ruby,R.drawable.scilab,R.drawable.selenium,
-				R.drawable.single_board_heater_system,R.drawable.spokentutorial,R.drawable.step,R.drawable.thunderbird
-				,R.drawable.tux_typing,R.drawable.what_is_spoken_tutorial,R.drawable.x_fig};  
-
-		List<Object> items = new ArrayList<Object>();
-		//items.add(new Category("About"));
-		items.add(new Item("Workshops", R.drawable.ic_action_refresh_dark));
-		items.add(new Item("Contacts for workshop", R.drawable.ic_action_select_all_dark));
-		items.add(new Category("FOSS Category"));
-		items.add(new Item("softwares", R.drawable.ic_action_refresh_dark));
-		items.add(new Item("Videos", R.drawable.ic_action_select_all_dark));
-		items.add(new Category("Cat 2"));
-		items.add(new Item("Item 5", R.drawable.ic_action_refresh_dark));
-		items.add(new Item("Item 6", R.drawable.ic_action_select_all_dark));
-		items.add(new Category("Cat 3"));
-		items.add(new Item("Item 7", R.drawable.ic_action_refresh_dark));
-		items.add(new Item("Item 8", R.drawable.ic_action_select_all_dark));
-		items.add(new Category("Cat 4"));
-		items.add(new Item("Item 9", R.drawable.ic_action_refresh_dark));
-		items.add(new Item("Item 10", R.drawable.ic_action_select_all_dark));
-
-		mList = new ListView(this);  
-		mAdapter = new MenuAdapter(items);
-		mList.setAdapter(mAdapter);
-		mList.setOnItemClickListener(mItemClickListener);
-
-		mMenuDrawer.setMenuView(mList);
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
-
-		mContentTextView = (TextView) findViewById(R.id.contentText);
-		mContentTextView.setText(mContentText);
-
-		mMenuDrawer.setOnInterceptMoveEventListener(new MenuDrawer.OnInterceptMoveEventListener() {
-			@Override
-			public boolean isViewDraggable(View v, int dx, int x, int y) {
-				return v instanceof SeekBar;
+		 builder = new AlertDialog.Builder(ContentSample.this);
+	        builder.setMessage("Firefox not installed,redirecting to play store!")
+	                .setCancelable(false)
+	                .setPositiveButton("Ok",
+	                        new DialogInterface.OnClickListener() {
+	                            public void onClick(DialogInterface dialog, int id) {
+	                            	final String appName ="org.mozilla.firefox" ;
+	                            	try {
+	                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
+	                            	} catch (android.content.ActivityNotFoundException anfe) {
+	                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+	                            	}
+	                            }
+	                        });
+	                 
+	        AlertDialog alert = builder.create();
+	        alert.show();
+		
+		}else {
+			if (inState != null) {
+				mActivePosition = inState.getInt(STATE_ACTIVE_POSITION);
+				mContentText = inState.getString(STATE_CONTENT_TEXT);
 			}
-		});
 
+			db = new DatabaseHandler(ContentSample.this);
+
+			mMenuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_CONTENT);
+			mMenuDrawer.setContentView(R.layout.activity_contentsample);
+			mMenuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
+			SubtitleStringArray = getResources().getStringArray(R.array.software_subtitle);
+
+			dr = new int[]{R.drawable.advanced_cpp,R.drawable.bash,R.drawable.blender,R.drawable.c_and_cpp,
+					R.drawable.cell_designer,R.drawable.digital_divide
+					,R.drawable.drupal,R.drawable.firefox,R.drawable.gchempaint,
+					R.drawable.geogebra, R.drawable.geogebra_for_engineering_drawing,R.drawable.gimp
+					,R.drawable.gns3,R.drawable.gschem,R.drawable.java,R.drawable.kicad,
+					R.drawable.ktouch,R.drawable.kturtal
+					,R.drawable.latex,R.drawable.libre_office_base_icon_gs_base,R.drawable.libre_office_calc_icon_gs_calc,
+					R.drawable.libre_office_draw_icon_gs_draw,R.drawable.libre_office_impress_icon_gs_impress,
+					R.drawable.libre_office_math_icon_gs_math,R.drawable.libre_office_writer_icon_gs_writer
+					,R.drawable.linux,R.drawable.netbeans,R.drawable.ngspice,R.drawable.openfoam_ogo,
+					R.drawable.orca,R.drawable.perl,R.drawable.php_mysql,R.drawable.python,R.drawable.python,
+					R.drawable.qcad,R.drawable.ruby,R.drawable.scilab,R.drawable.selenium,
+					R.drawable.single_board_heater_system,R.drawable.spokentutorial,R.drawable.step,R.drawable.thunderbird
+					,R.drawable.tux_typing,R.drawable.what_is_spoken_tutorial,R.drawable.x_fig};  
+
+			List<Object> items = new ArrayList<Object>();
+			//items.add(new Category("About"));
+			items.add(new Item("Workshops", R.drawable.ic_action_refresh_dark));
+			items.add(new Item("Contacts for workshop", R.drawable.ic_action_select_all_dark));
+			items.add(new Category("FOSS Category"));
+			items.add(new Item("Software", R.drawable.ic_action_refresh_dark));
+			items.add(new Item("Videos", R.drawable.ic_action_select_all_dark));
+			items.add(new Category("Cat 2"));
+			items.add(new Item("Item 5", R.drawable.ic_action_refresh_dark));
+			items.add(new Item("Item 6", R.drawable.ic_action_select_all_dark));
+			items.add(new Category("Cat 3"));
+			items.add(new Item("Item 7", R.drawable.ic_action_refresh_dark));
+			items.add(new Item("Item 8", R.drawable.ic_action_select_all_dark));
+			items.add(new Category("Cat 4"));
+			items.add(new Item("Item 9", R.drawable.ic_action_refresh_dark));
+			items.add(new Item("Item 10", R.drawable.ic_action_select_all_dark));
+
+			mList = new ListView(this);  
+			mAdapter = new MenuAdapter(items);
+			mList.setAdapter(mAdapter);
+			mList.setOnItemClickListener(mItemClickListener);
+
+			mMenuDrawer.setMenuView(mList);
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+				getActionBar().setDisplayHomeAsUpEnabled(true);
+			}
+
+			mContentTextView = (TextView) findViewById(R.id.contentText);
+			mContentTextView.setText(mContentText);
+
+			mMenuDrawer.setOnInterceptMoveEventListener(new MenuDrawer.OnInterceptMoveEventListener() {
+				@Override
+				public boolean isViewDraggable(View v, int dx, int x, int y) {
+					return v instanceof SeekBar;
+				}
+			});
+
+		}
+		
+		
 
 	}
 
@@ -271,7 +298,7 @@ public class ContentSample extends Activity implements OnClickListener{
 				/*   
 				 * get the http response from server
 				 */
-				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				getResponseFromServer("http://spoken-tutorial.org/data/android_db_middleware.php");
 				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
 
 			}else if(position == 1){    
@@ -284,7 +311,7 @@ public class ContentSample extends Activity implements OnClickListener{
 				/*
 				 * get the http response from server
 				 */
-				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				getResponseFromServer("http://spoken-tutorial.org/data/android_db_middleware.php");
 				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
 				final ImageView india = (ImageView)window_layout.findViewById(R.id.imageButton1);
 				final Bitmap bitmap = ((BitmapDrawable)india.getDrawable()).getBitmap();
@@ -384,7 +411,7 @@ public class ContentSample extends Activity implements OnClickListener{
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query3)));
 				MYpostParameters.add(new BasicNameValuePair("query_no","3"));
-				getResponseFromServer("http://10.118.248.44/xampp/check.php");
+				getResponseFromServer("http://spoken-tutorial.org/data/android_db_middleware.php");
 				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
 
 			}else if (position==4) {
@@ -683,13 +710,26 @@ public class ContentSample extends Activity implements OnClickListener{
 
 	@Override
 	public void onBackPressed() {
-		final int drawerState = mMenuDrawer.getDrawerState();
-		if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
-			mMenuDrawer.closeMenu();
-			return;
-		}
+				
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure you want to exit?")
+		.setCancelable(false)
+		.setPositiveButton("Yes",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				finish();
+				android.os.Process.killProcess(android.os.Process.myPid());
 
-		super.onBackPressed();
+			}
+		})
+		.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+		
 	}
 
 	private static class Item {
@@ -999,32 +1039,9 @@ public class ContentSample extends Activity implements OnClickListener{
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int pos, long arg3) {
-				String status = v.appInstalledOrNot("org.mozilla.firefox",ContentSample.this);
-				System.out.println("status1:"+status);
-				if("false".equals(status)){ 
-					  Builder builder = new AlertDialog.Builder(ContentSample.this);
-				        builder.setMessage("Firefox not installed,redirecting to play store!")
-				                .setCancelable(false)
-				                .setPositiveButton("Ok",
-				                        new DialogInterface.OnClickListener() {
-				                            public void onClick(DialogInterface dialog, int id) {
-				                            	final String appName ="org.mozilla.firefox" ;
-				                            	try {
-				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
-				                            	} catch (android.content.ActivityNotFoundException anfe) {
-				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
-				                            	}
-				                            }
-				                        });
-				                 
-				        AlertDialog alert = builder.create();
-				        alert.show();
-					
-					
-				}else {
-					v.intend_video(event_row, pos);
-
-				}
+				
+					v.intend_video(event_row, pos,ContentSample.this);
+				
 			}
 		});
 
@@ -1045,35 +1062,13 @@ public class ContentSample extends Activity implements OnClickListener{
 		 */
 		foss_details_list_view.setOnItemClickListener(new OnItemClickListener() {
 
+		     AlertDialog.Builder builder;
+
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int pos, long arg3) {
-				String status = v.appInstalledOrNot("org.mozilla.firefox",ContentSample.this);
-				System.out.println("status1:"+status);
-				if("false".equals(status)){
-					  Builder builder = new AlertDialog.Builder(ContentSample.this);
-				        builder.setMessage("Firefox not installed,redirecting to play store!")
-				                .setCancelable(false)
-				                .setPositiveButton("Ok",
-				                        new DialogInterface.OnClickListener() {
-				                            public void onClick(DialogInterface dialog, int id) {
-				                            	final String appName ="org.mozilla.firefox" ;
-				                            	try {
-				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
-				                            	} catch (android.content.ActivityNotFoundException anfe) {
-				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
-				                            	}
-				                            }
-				                        });
-				                 
-				        AlertDialog alert = builder.create();
-				        alert.show();
-					
-					
-				}else {
-					v.intend_video(event_row, pos);
-
-				}
+				
+					v.intend_video(event_row, pos,ContentSample.this);
 
 			}
 		});
@@ -1082,37 +1077,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		viewflag = false;
 
 	}
-	
-	void video_intend(List<ArrayList<String>> list1 ,int pos1){
-		String status = v.appInstalledOrNot("org.mozilla.firefox",ContentSample.this);
-		System.out.println("status1:"+status);
-		if("false".equals(status)){
-			  Builder builder = new AlertDialog.Builder(ContentSample.this);
-		        builder.setMessage("Firefox not installed,redirecting to play store!")
-		                .setCancelable(false)
-		                .setPositiveButton("Ok",
-		                        new DialogInterface.OnClickListener() {
-		                            public void onClick(DialogInterface dialog, int id) {
-		                            	final String appName ="org.mozilla.firefox" ;
-		                            	try {
-		                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
-		                            	} catch (android.content.ActivityNotFoundException anfe) {
-		                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
-		                            	}
-		                            }
-		                        });
-		                 
-		        AlertDialog alert = builder.create();
-		        alert.show();
-			
-		Toast.makeText(ContentSample.this, "Not installed", Toast.LENGTH_SHORT).show();
-			
-		}else {
-			v.intend_video(list1, pos1);
-
-		}
-	}
-
+  
 	private void displayFossGridDetails(List<ArrayList<String>> event_row) {
 		final List<HashMap<String, String>> fillMaps;
 		String[] from;
@@ -1200,7 +1165,7 @@ public class ContentSample extends Activity implements OnClickListener{
 					if(eventList.size()==0)
 					{
 						registerForContextMenu(foss_cat_list_view);
-						new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
+						new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
 						langflag = true;
 
 
@@ -1266,7 +1231,7 @@ public class ContentSample extends Activity implements OnClickListener{
 			int count  = db.getTutorialCount(foss_name,item.getTitle().toString());  
 			if(count <= 0)
 			{
-				new GetHttpResponseAsync().execute("http://10.118.248.44/xampp/check.php");
+				new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
 			}else{
 				List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
 				if(viewflag == true)
@@ -1292,5 +1257,5 @@ public class ContentSample extends Activity implements OnClickListener{
 		return new BitmapDrawable( getResources(), bitmapScaled );
 	}
 
-
+	
 }

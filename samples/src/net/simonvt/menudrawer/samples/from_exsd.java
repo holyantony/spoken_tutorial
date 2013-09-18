@@ -54,36 +54,36 @@ public class from_exsd extends Activity{
 				status=v.appInstalledOrNot("com.mxtech.videoplayer.ad",from_exsd.this);
 				System.out.println("status1:"+status);
 
-				if("false".equals(status)){
-					  builder = new AlertDialog.Builder(from_exsd.this);
-				        builder.setMessage("MX Player not installed,redirecting to play store!")
-				                .setCancelable(false)
-				                .setPositiveButton("Ok",
-				                        new DialogInterface.OnClickListener() {
-				                            public void onClick(DialogInterface dialog, int id) {
-				                            	final String appName ="com.mxtech.videoplayer.ad" ;
-				                            	try {
-				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
-				                            	} catch (android.content.ActivityNotFoundException anfe) {
-				                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
-				                            	}
-				                            }
-				                        });
-				                 
-				        AlertDialog alert = builder.create();
-				        alert.show();
-					
-				Toast.makeText(from_exsd.this, "Not installed", Toast.LENGTH_SHORT).show();
-					
-				}else {
+				
 					v.list_intent(position, from_exsd.this);
 
-				}
 			}
 		});
 
 	}
 	
+	public void onBackPressed() {
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure you want to exit?")
+		.setCancelable(false)
+		.setPositiveButton("Yes",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				finish();
+				android.os.Process.killProcess(android.os.Process.myPid());
+
+			}
+		})
+		.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+		
+	}
 	
 
 }

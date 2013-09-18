@@ -66,9 +66,12 @@ public class video extends Activity{
 
 		Intent newIntent = new Intent(
 				android.content.Intent.ACTION_VIEW);
+		newIntent.setClassName("org.mozilla.firefox", "org.mozilla.firefox.App");
+
 		newIntent.setDataAndType(Uri.parse("file://" + path),
 				"video/*");
 		newIntent.setFlags(newIntent.FLAG_ACTIVITY_NEW_TASK);
+		
 		try {
 			context.startActivity(newIntent);
 		}catch (android.content.ActivityNotFoundException e) {
@@ -97,12 +100,12 @@ public class video extends Activity{
         return app_installed ;
 }
 	
-	void intend_video(List<ArrayList<String>> list ,int pos){
+	void intend_video(List<ArrayList<String>> list ,int pos,Context context){
 		String url = "http://video.spoken-tutorial.org/"+list.get(pos).get(4);
 		Intent intent_browser = new Intent(Intent.ACTION_VIEW);
 		intent_browser.setClassName("org.mozilla.firefox", "org.mozilla.firefox.App");
 		intent_browser.setData(Uri.parse(url));
-		startActivity(intent_browser);
+		context.startActivity(intent_browser);
 	}
 	
 	
