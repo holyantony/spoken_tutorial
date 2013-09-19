@@ -52,8 +52,10 @@
         <item>GeoGebra is an interactive geometry, algebra, and calculus application, intended for teachers and students</item>
         <item>GIMP (GNU Image Manipulation Program) is a free software raster graphics editor</item>
         <item>It allow to simulate complex network. It works on windows, Linux and Mac OS based machines</item>
-        <item></item>
+        <item>Web based accounting software</item>
+        <item >Schemantic capture. Gschem is part of the project gEDA</item>
         <item>It is a free and open source high level programming language,simple as well as object oriented language</item>
+        <item >Java EE technology</item>
         <item>KiCad is a open source(GPL) integrated package for electronics design automation(EDA),used for designing schematics of electronics circuits and printed circuit board(PCB)</item>
         <item>KTouch is a typing tutor,it teaches you how to type using an online interactive keyboard</item>
         <item>KTurtle is an educational programming environment that aims to make learning how to program as easy as possible</item>
@@ -61,7 +63,7 @@
         <item>LibreOffice Base is the database front-end of the LibreOffice suite,Base is the equivalent of Microsoft Access</item>
         <item>It is the equivalent of Microsoft Excel in Microsoft Suite and has a number of unique features, including a system which automatically defines series of graphs, based on information available to the user</item>
         <item>LibreOffice is a graphics software that allows you to create a wide range of vector graphics</item>
-        <item></item>
+        <item>Spreadsheet component of LibreOffice software </item>
         <item>LibreOffice Math is a software application designed for creating and editing mathematical formulae</item>
         <item>LibreOffice Writer is the word processor component of the LibreOffice Suite.It is the equivalent of Microsoft Word in Microsoft Office Suite</item>
         <item>Linux is one of the most popular Operating Systems used in todays world</item>
@@ -78,11 +80,10 @@
         <item>Mathematical and scientific calculation software, open source substitute for MATLAB, very useful for all science and engineering students, in academics particularly. </item>
         <item>Selenium is an open source Test Automation tool which has rich set of testing functions and the operations are highly flexible</item>
         <item>A single-board heater system is a low cost, open source, lab-in-a-box setup</item>
-        <item></item>
         <item>STEP is an interactive tool for learning Physics. Using this tool, you can model the physical world through simulations</item>
         <item>The Spoken Tutorials for Thunderbird are being contributed by DesiCrew Solutions, Chennai</item>
         <item>Tux Typing provides the following important features:Start typing,Practice lessons,Play a game,Set language for typing</item>
-        <item></item>
+        <item>Free,open source,cross-platform email,news and chat client developed by Mozilla Foundation</item>
         <item>Xfig is an interactive drawing tool which runs under X Window System on most UNIX-compatible platforms</item>
         
     </string-array>

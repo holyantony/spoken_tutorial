@@ -116,6 +116,7 @@ public class ContentSample extends Activity implements OnClickListener{
 	ArrayList<String> videoPath= new ArrayList<String>();
     video v=new video();
     AlertDialog.Builder builder;
+    String foss_name1;
 	@Override
 	protected void onCreate(Bundle inState) {
 		super.onCreate(inState);
@@ -160,7 +161,7 @@ public class ContentSample extends Activity implements OnClickListener{
 					R.drawable.cell_designer,R.drawable.digital_divide
 					,R.drawable.drupal,R.drawable.firefox,R.drawable.gchempaint,
 					R.drawable.geogebra, R.drawable.geogebra_for_engineering_drawing,R.drawable.gimp
-					,R.drawable.gns3,R.drawable.gschem,R.drawable.java,R.drawable.kicad,
+					,R.drawable.gns3,R.drawable.gnukhata,R.drawable.gschem,R.drawable.java,R.drawable.kicad,
 					R.drawable.ktouch,R.drawable.kturtal
 					,R.drawable.latex,R.drawable.libre_office_base_icon_gs_base,R.drawable.libre_office_calc_icon_gs_calc,
 					R.drawable.libre_office_draw_icon_gs_draw,R.drawable.libre_office_impress_icon_gs_impress,
@@ -178,16 +179,7 @@ public class ContentSample extends Activity implements OnClickListener{
 			items.add(new Category("FOSS Category"));
 			items.add(new Item("Software", R.drawable.ic_action_refresh_dark));
 			items.add(new Item("Videos", R.drawable.ic_action_select_all_dark));
-			items.add(new Category("Cat 2"));
-			items.add(new Item("Item 5", R.drawable.ic_action_refresh_dark));
-			items.add(new Item("Item 6", R.drawable.ic_action_select_all_dark));
-			items.add(new Category("Cat 3"));
-			items.add(new Item("Item 7", R.drawable.ic_action_refresh_dark));
-			items.add(new Item("Item 8", R.drawable.ic_action_select_all_dark));
-			items.add(new Category("Cat 4"));
-			items.add(new Item("Item 9", R.drawable.ic_action_refresh_dark));
-			items.add(new Item("Item 10", R.drawable.ic_action_select_all_dark));
-
+			
 			mList = new ListView(this);  
 			mAdapter = new MenuAdapter(items);
 			mList.setAdapter(mAdapter);
@@ -327,73 +319,73 @@ public class ContentSample extends Activity implements OnClickListener{
 						System.out.println("PIXEL"+pixel);
 
 						if(pixel.equalsIgnoreCase("ffe4ce16")){
-							Toast.makeText(ContentSample.this, "Tamil Nadu touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Tamil Nadu touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Tamil Nadu");
 						}if(pixel.equalsIgnoreCase("ff8056f8")){
-							Toast.makeText(ContentSample.this, "kerala touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "kerala touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Kerala");
 						}if(pixel.equalsIgnoreCase("ff25ec9b")){
-							Toast.makeText(ContentSample.this, "karnataka touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "karnataka touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Karnataka");
 						}if(pixel.equalsIgnoreCase("fff58dfe")){
-							Toast.makeText(ContentSample.this, "andra pradesh touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "andra pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Andhra Pradesh");
 						}if(pixel.equalsIgnoreCase("fffccb02")){
-							Toast.makeText(ContentSample.this, "maharashtra touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "maharashtra touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Maharashtra");
 						}if(pixel.equalsIgnoreCase("ffd37059")){
-							Toast.makeText(ContentSample.this, "orissa touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "orissa touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Orissa");
 						}if(pixel.equalsIgnoreCase("ff2682ff")){
-							Toast.makeText(ContentSample.this, "chhattiagarth touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "chhattiagarth touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Chattisgarh");
 						}if(pixel.equalsIgnoreCase("ff16b002")){
-							Toast.makeText(ContentSample.this, "madhyapradesh touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "madhyapradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Madhya Pradesh");
 						}if(pixel.equalsIgnoreCase("ffa853f7")){
-							Toast.makeText(ContentSample.this, "goa touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "goa touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Goa");
 						}if(pixel.equalsIgnoreCase("ffd7ea05")){
-							Toast.makeText(ContentSample.this, "Jharkhand touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Jharkhand touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Jharkhand");
 						}if(pixel.equalsIgnoreCase("ffff600c")){
-							Toast.makeText(ContentSample.this, "Rajasthan touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Rajasthan touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Rajasthan");
 						}if(pixel.equalsIgnoreCase("fffcff00")){
-							Toast.makeText(ContentSample.this, "Uttar Pradesh touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Uttar Pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Uttar Pradesh");
 						}if(pixel.equalsIgnoreCase("ff62e6ff")){
-							Toast.makeText(ContentSample.this, "Gujarat touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Gujarat touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Gujarat");
 						}if(pixel.equalsIgnoreCase("ffebc5de")){
-							Toast.makeText(ContentSample.this, "Bihar touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Bihar touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Bihar");
 						}if(pixel.equalsIgnoreCase("fff8de01")){
-							Toast.makeText(ContentSample.this, "Jammu Kashmir touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Jammu Kashmir touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Jammu Kashmir");   
 						}if(pixel.equalsIgnoreCase("ff794df8")){
-							Toast.makeText(ContentSample.this, "Himachal Pradesh touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Himachal Pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Himachal Pradesh");
 						}if(pixel.equalsIgnoreCase("ffb12816")){
-							Toast.makeText(ContentSample.this, "Uttarakhand touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Uttarakhand touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Uttarakhand");  
 						}if(pixel.equalsIgnoreCase("fffdf9ba")){
-							Toast.makeText(ContentSample.this, "Punjab touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Punjab touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Punjab");
 						}if(pixel.equalsIgnoreCase("ffc1e1b2")){
-							Toast.makeText(ContentSample.this, "Haryana touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Haryana touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Haryana");
 						}if(pixel.equalsIgnoreCase("fffcff00")){
-							Toast.makeText(ContentSample.this, "Delhi touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Delhi touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Delhi");
 						}if(pixel.equalsIgnoreCase("ff5a25f3")){
-							Toast.makeText(ContentSample.this, "West Bengal touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "West Bengal touched", Toast.LENGTH_SHORT).show();
 							build_dialog("West Bengal");
 						}if(pixel.equalsIgnoreCase("ff8010d4")){
-							Toast.makeText(ContentSample.this, "Assam touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Assam touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Assam");
 						}if(pixel.equalsIgnoreCase("ffda7501")){
-							Toast.makeText(ContentSample.this, "Arunachal Pradesh touched", Toast.LENGTH_SHORT).show();
+//							Toast.makeText(ContentSample.this, "Arunachal Pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Arunachal Pradesh");
 						}
 
@@ -944,10 +936,25 @@ public class ContentSample extends Activity implements OnClickListener{
 						}
 						if(viewflag == true)
 						{
-							displayFossGridDetails(eventList1);  
+							System.out.println("list:"+eventList1+""+"size"+eventList1.size());
+							
+							if(eventList1.size()==0){
+								Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+							}else {
+								displayFossGridDetails(eventList1);  
+
+							}
+							
 						}else
 						{
-							displayFossListDetails(eventList1);  
+							
+							if(eventList1.size()==0){
+								Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+							}else {
+								displayFossListDetails(eventList1);  
+
+							}
+							
 						}
 					}
 				}
@@ -1113,6 +1120,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		from = new String[] {"srno", "fossname","level","language","tutorial","imageid"};
 		to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_level,R.id.language,R.id.soft_link,R.id.right_image};
 		fillMaps = new ArrayList<HashMap<String, String>>();
+//		Toast.makeText(ContentSample.this, "Lisst:"+event_row, Toast.LENGTH_SHORT).show();
 		if(event_row.size()!=0)
 		{
 			for(int i = 0; i < event_row.size(); i++){
@@ -1172,7 +1180,7 @@ public class ContentSample extends Activity implements OnClickListener{
 					}else{
 						registerForContextMenu(foss_cat_list_view);
 						langflag =false;
-						v.setLongClickable(false);
+						foss_cat_list_view.setLongClickable(false);
 						openContextMenu(v);
 					}
 
@@ -1199,10 +1207,9 @@ public class ContentSample extends Activity implements OnClickListener{
 		menu.setHeaderIcon(getScaledIcon(d,45,45));
 		menu.setHeaderTitle("Select language for "+foss_name+" video tutorial");  
 		List<String> eventList = null;
-		eventList = db.getAllFossLanguage(foss_name);
-
+		eventList = db.getAllFossLanguage(foss_name);;
+		
 		for(int i=0;i<eventList.size();i++){
-
 			//System.out.println("foss category "+eventList.get(i));
 			menu.add(Menu.NONE, v.getId(), 0, eventList.get(i).toString());
 		}
@@ -1236,9 +1243,24 @@ public class ContentSample extends Activity implements OnClickListener{
 				List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
 				if(viewflag == true)
 				{
-					displayFossGridDetails(eventList);
-				}else{
-					displayFossListDetails(eventList);
+					System.out.println("list:"+eventList+""+"size"+eventList.size());
+					
+					if(eventList.size()==0){
+						Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+					}else {
+						displayFossGridDetails(eventList);  
+
+					}
+					
+				}else
+				{
+					
+					if(eventList.size()==0){
+						Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+					}else {
+						displayFossListDetails(eventList);  
+
+					}
 				}
 			}
 
