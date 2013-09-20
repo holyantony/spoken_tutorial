@@ -48,7 +48,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// foss_category Table Columns names
 	private static final String FOSS_KEY_ID = "id";
 	private static final String FOSS_CATEGORY = "foss_category";
-	//private static final String FOSS_DISC = "foss_desc";
+	private static final String FOSS_DISC = "foss_desc";
 	
 	// foss_langugaes Table Columns names
 	private static final String LANG_KEY_ID = "id";
@@ -88,7 +88,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// foss_category table
 		String CREATE_FOSS_CATEGORY_TABLE = "CREATE TABLE "
 				+ TABLE_FOSS_CATEGORY + "(" + FOSS_KEY_ID
-				+ " INTEGER PRIMARY KEY," + FOSS_CATEGORY + " TEXT" + ")";
+				+ " INTEGER PRIMARY KEY," + FOSS_CATEGORY + " TEXT," + FOSS_DISC
+				+ " TEXT" + ")";
 		db.execSQL(CREATE_FOSS_CATEGORY_TABLE);
 		
 		// foss_languages table
@@ -122,7 +123,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		// Drop older table if existed
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_FOSS_CATEGORY);
-		
 		
 		// Drop older table if existed
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_FOSS_LANGUAGE);
@@ -169,8 +169,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		//values.put(FOSS_KEY_ID ,fosscat.get_imageid()); // e
+		values.put(FOSS_KEY_ID ,fosscat.get_imageid()); // e
+		System.out.println("fosscat.get_fosscategory()"+fosscat.get_fosscategory());
 		values.put(FOSS_CATEGORY, fosscat.get_fosscategory()); // foss category
+		values.put(FOSS_DISC, fosscat.get_fossdesc()); // foss desc
 
 		// Inserting Row
 		db.insert(TABLE_FOSS_CATEGORY , null, values);
@@ -278,21 +280,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	// Getting list of foss categories 
-	public List<String> getAllFossCat() {
-		List<String> FossCatList = new ArrayList<String>();
+	public List <ArrayList<String>>  getAllFossCat() {
+		List<ArrayList<String>> FossCatList = new ArrayList<ArrayList<String>>();
+	
+		
 		// Select All Query
 		String selectQuery = "SELECT * FROM " + TABLE_FOSS_CATEGORY;
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
-
+		List<String> List;
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
+			
 			do {
-				FossCatList.add(cursor.getString(1).toString());
+				List = new ArrayList<String>();
+				List.add(cursor.getString(1).toString());
+				List.add(cursor.getString(2).toString());
+				FossCatList.add((ArrayList<String>) List);
 			} while (cursor.moveToNext());
+			
 		}
-
+		System.out.println("foss cat details "+FossCatList);
 		// return foss category list  
 		return FossCatList;
 	}
@@ -363,3 +372,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			return count;
 		}
 }
+

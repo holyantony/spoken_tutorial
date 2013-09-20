@@ -105,7 +105,8 @@ public class ContentSample extends Activity implements OnClickListener{
 	String res;
 	DatabaseHandler db;
 	String[] names;
-	static String foss_name,language;
+	static String language;
+	String foss_name;
 	static Boolean fossflag = true,langflag = false , gridview = true ,viewflag = true;
 	static int count ;
 	ArrayList<FossCategory> foss_cat_list;
@@ -209,6 +210,8 @@ public class ContentSample extends Activity implements OnClickListener{
 
 	private void getResponseFromServer(String string) {
 		List<String> eventList = null;
+		boolean a = true;
+                List<ArrayList<String>> eventList1 = null;
 		if(mActivePosition == 0){
 			// query db
 			eventList = db.getAllEvents();
@@ -219,21 +222,24 @@ public class ContentSample extends Activity implements OnClickListener{
 		}else if(mActivePosition == 3)
 		{
 
-			eventList = db.getAllFossCat();
-			System.out.println("foss category "+eventList);
+			a = false;
+                      	eventList1 = db.getAllFossCat();
+                      	System.out.println("foss category "+eventList1);
+
 
 
 		}
-		if(eventList.size() != 0){
+		 if(a==true&&eventList.size() != 0||eventList1.size() != 0){
+
 			//try {
 			System.out.println("ENTRIES AVAILABLE IN DATABASE");
 			if(mActivePosition == 0){
 				displayEvents(eventList);
 			}else if(mActivePosition == 3){
 
-				displayFoss(eventList);
-
-
+			       eventList1 = db.getAllFossCat();
+                               System.out.println("offline foss cat"+eventList1);
+                               displayFoss(eventList1);
 			}
 			//} catch (Exception e) {
 			//System.out.println("EXCEPTION: "+e.getMessage().toString());
@@ -403,9 +409,11 @@ public class ContentSample extends Activity implements OnClickListener{
 				MYpostParameters.removeAll(MYpostParameters);
 				MYpostParameters.add(new BasicNameValuePair("query",getString(R.string.query3)));
 				MYpostParameters.add(new BasicNameValuePair("query_no","3"));
+				registerForContextMenu(foss_cat_list_view);
 				getResponseFromServer("http://spoken-tutorial.org/data/android_db_middleware.php");
+				
 				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
-
+			
 			}else if (position==4) {
 				videoPath.clear();
 				mMenuDrawer.setContentView(R.layout.tab); // set the main
@@ -910,15 +918,37 @@ public class ContentSample extends Activity implements OnClickListener{
 							db.addFossLanugaes(foss);
 							System.out.println("hello "+rows[i]);  
 						}
+						 openContextMenu(foss_cat_list_view);
 
 					}else if (fossflag == true && langflag == false){
 
-						for(int i=0;i<rows.length;i++){
-							FossCategory foss = new FossCategory(dr[i],rows[i]);
-							db.addFossCategory(foss);
-						}
-						List<String> eventList = Arrays.asList(rows);  
-						displayFoss(eventList);  
+						FossCategory foss;
+						 for(int i=0;i<rows.length;i++){
+                                                      
+							 						List <String>List = new ArrayList<String>();
+                                                       String[] rows1 = rows[i].split(",");
+                                                       System.out.println("rows ..."+rows1.length);
+                                                       if(rows1.length==1)
+                                                       {
+                                                               //System.out.println("cat "+rows1[0]+"");
+                                                               foss = new FossCategory(i,rows1[0],"No Desc");
+                                                                       List.add(rows1[0]);
+                                                                       List.add("No Desc");
+                                                       }
+                                                       else
+                                                       {
+                                                               //System.out.println("cat "+rows1[0]+"");
+                                                               foss = new FossCategory(i,rows1[0],rows1[1]);
+                                                                      List.add(rows1[0]);
+                                                                       List.add(rows1[1]);
+                                                               
+                                                       }
+                                                        db.addFossCategory(foss);
+                                                       eventList1.add((ArrayList<String>) List);
+                                                }
+                                            
+                                              displayFoss(eventList1);  
+  
 
 					}
 					if(fossflag == false && langflag == false)
@@ -990,7 +1020,7 @@ public class ContentSample extends Activity implements OnClickListener{
 
 	}
 
-	private void displayFoss(List<String> event_row) {
+	private void displayFoss(List<ArrayList<String>> event_row) {
 		String[] from = new String[] {"iamgeid", "foss","subtitle"};
 		int[] to = new int[] {R.id.image_id, R.id.soft_title,R.id.soft_sub_title};
 
@@ -998,13 +1028,49 @@ public class ContentSample extends Activity implements OnClickListener{
 
 		for(int i = 0; i < event_row.size(); i++){
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("iamgeid", "" + dr[i]);
-			map.put("foss", "" + event_row.get(i));
-			map.put("subtitle","" + SubtitleStringArray[i]);
+			map.put("iamgeid", "" + "");
+            map.put("foss", "" + event_row.get(i).get(0));
+            map.put("subtitle","" + event_row.get(i).get(1));
+
 			fillMaps.add(map);
 		}
 		adapterFoss(fillMaps,from,to);
-		listenerOnFossCategoryListView();
+		//listenerOnFossCategoryListView();
+		foss_cat_list_view.setOnItemClickListener(new OnItemClickListener() {   
+			
+			public void onItemClick(AdapterView a, View v, int position, long id) {
+				
+				TextView c = (TextView) v.findViewById(R.id.soft_title);
+			    foss_name = c.getText().toString();
+
+			   // Toast.makeText(ContentSample.this,foss_name, Toast.LENGTH_SHORT).show();
+			    String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category = '"+foss_name +"' order by tr.language";
+
+				MYpostParameters.removeAll(MYpostParameters);
+				MYpostParameters.add(new BasicNameValuePair("query",query4));
+				MYpostParameters.add(new BasicNameValuePair("query_no","4"));
+				// if internet is ON
+				
+					List<String> eventList = null;
+					eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
+					if(eventList.size()==0)
+					{
+						
+						new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
+						langflag = true;
+
+
+					}else{
+						langflag =false;
+						
+						openContextMenu(v);
+						
+					}
+					
+				}
+			
+			});
+		
 
 	}
 	public void adapterFoss(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
@@ -1024,16 +1090,6 @@ public class ContentSample extends Activity implements OnClickListener{
 		mMenuDrawer.setContentView(R.layout.grid_foss_details); // set the main content view list row
 		foss_details_grid_view = (GridView) findViewById(R.id.gridview1); // get the list row id 
 
-		//ImageView ivList = (ImageView) findViewById(R.id.tvList);
-		//ImageView ivGrid = (ImageView) findViewById(R.id.tvGrid);
-		/*ivList.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					// TODO Auto-generated method stub
-
-				}
-			});*/
 		SimpleAdapter adapter; 
 
 		adapter = new SimpleAdapter(ContentSample.this, fillMaps, R.layout.software_details_grid_view, from, to);
@@ -1151,81 +1207,39 @@ public class ContentSample extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 
 	}
-	public void listenerOnFossCategoryListView()
-	{
-		foss_cat_list_view.setOnItemClickListener(new OnItemClickListener() {   
-			public void onItemClick(AdapterView a, View v, int position, long id) {
-
-				//v.setLongClickable(false);
-
-				foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
-				String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category = '"+foss_name +"' order by tr.language";
-
-				MYpostParameters.removeAll(MYpostParameters);
-				MYpostParameters.add(new BasicNameValuePair("query",query4));
-				MYpostParameters.add(new BasicNameValuePair("query_no","4"));
-				// if internet is ON
-				if (isInternetOn()) {
-
-					System.out.println("INTERNET ON");
-					List<String> eventList = null;
-					eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
-					if(eventList.size()==0)
-					{
-						registerForContextMenu(foss_cat_list_view);
-						new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
-						langflag = true;
-
-
-					}else{
-						registerForContextMenu(foss_cat_list_view);
-						langflag =false;
-						foss_cat_list_view.setLongClickable(false);
-						openContextMenu(v);
-					}
-
-				}else{
-					System.out.println("INTERNET OFF");
-				}		
-
-
-
-			}
-
-		});
-
-	}
-
-
-
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
 		super.onCreateContextMenu(menu, v, menuInfo); 
 		info = (AdapterContextMenuInfo) menuInfo;
-		Drawable d = getResources().getDrawable(dr[info.position]);
-		menu.setHeaderIcon(getScaledIcon(d,45,45));
+		
 		menu.setHeaderTitle("Select language for "+foss_name+" video tutorial");  
 		List<String> eventList = null;
-		eventList = db.getAllFossLanguage(foss_name);;
-		
-		for(int i=0;i<eventList.size();i++){
-			//System.out.println("foss category "+eventList.get(i));
-			menu.add(Menu.NONE, v.getId(), 0, eventList.get(i).toString());
+		eventList = db.getAllFossLanguage(foss_name);
+		if(eventList.size()!=0)
+		{
+			for(int i=0;i<eventList.size();i++){
+				//System.out.println("foss category "+eventList.get(i));
+				menu.add(Menu.NONE, v.getId(), 0, eventList.get(i).toString());
+			}
+		}else
+		{
+			if (isInternetOn()) {  
+				System.out.println("INTERNET ON");
+			}else
+			{
+				Toast.makeText(ContentSample.this, "Please ON internet connection", Toast.LENGTH_SHORT).show();
+				System.out.println("INTERNET OFF");
+			}
 		}
-
-
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		//"select tr.tutorial_video,td.foss_category,tr.language, td.tutorial_level, td.tutorial_name, td.order_code from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='English'and td.foss_category='Linux' ORDER BY td.tutorial_level, td.order_code ASC"
-		//foss_name =((TextView) v.findViewById(R.id.soft_title)).getText().toString();
-		System.out.println("foss name for getting on item click"+foss_name);
-		System.out.println("language for getting on item click"+item.getTitle());
-
+		
 		String query5="select td.foss_category,tr.language,td.tutorial_level, td.tutorial_name ,tr.tutorial_video from CDEEP.tutorial_resources tr,CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='"+item.getTitle()+"'and td.foss_category='"+foss_name+"' ORDER BY td.tutorial_level, td.order_code ASC";
-		System.out.println("query 5 "+query5);    
+		  
 		langflag = false;
 		fossflag = false;
 		language = item.getTitle().toString();
@@ -1267,7 +1281,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		}else{
 			System.out.println("INTERNET OFF");
 		}		
-		//openOptionsMenu();
+		
 		return true;
 	}
 

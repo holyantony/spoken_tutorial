@@ -9,14 +9,22 @@ public class FossCategory {
     String _language;
     String _tutorialname;
     String _tutoriallink;
+    String _fossdesc;
    
 	public FossCategory()
     {
 		
     }
-	public FossCategory(int _imageid,String _fosscategory) {
+	public FossCategory(int _imageid,String _fosscategory,String _fossdesc) {
 		this._imageid = _imageid;
 		this._fosscategory = _fosscategory;
+		this._fossdesc = _fossdesc;
+	}
+	public String get_fossdesc() {
+		return _fossdesc;
+	}
+	public void set_fossdesc(String _fossdesc) {
+		this._fossdesc = _fossdesc;
 	}
 	public FossCategory(String _fosscategory,String _language) {
 		
