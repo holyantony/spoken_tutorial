@@ -8,6 +8,7 @@ import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LocalActivityManager;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,8 +26,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsManager;
+import android.util.Base64;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -60,9 +64,16 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -83,7 +94,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-
 import workshops.database.handler.*;;
 
 public class ContentSample extends Activity implements OnClickListener{
@@ -92,7 +102,7 @@ public class ContentSample extends Activity implements OnClickListener{
 	private static final String STATE_CONTENT_TEXT = "net.simonvt.menudrawer.samples.ContentSample.contentText";
 
 	private MenuDrawer mMenuDrawer;
-
+	ProgressDialog mProgressDialog;
 	private MenuAdapter mAdapter;
 	private ListView mList;
 
@@ -115,9 +125,9 @@ public class ContentSample extends Activity implements OnClickListener{
 	String[] SubtitleStringArray;
 	AdapterView.AdapterContextMenuInfo info ;
 	ArrayList<String> videoPath= new ArrayList<String>();
-    video v=new video();
-    AlertDialog.Builder builder;
-    String foss_name1;
+	video v=new video();
+	AlertDialog.Builder builder;
+	String foss_name1;
 	@Override
 	protected void onCreate(Bundle inState) {
 		super.onCreate(inState);
@@ -127,24 +137,24 @@ public class ContentSample extends Activity implements OnClickListener{
 		Toast.makeText(ContentSample.this, "Status:"+status, Toast.LENGTH_SHORT).show();
 		if("false".equals(status)){
 
-		 builder = new AlertDialog.Builder(ContentSample.this);
-	        builder.setMessage("Firefox not installed,redirecting to play store!")
-	                .setCancelable(false)
-	                .setPositiveButton("Ok",
-	                        new DialogInterface.OnClickListener() {
-	                            public void onClick(DialogInterface dialog, int id) {
-	                            	final String appName ="org.mozilla.firefox" ;
-	                            	try {
-	                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
-	                            	} catch (android.content.ActivityNotFoundException anfe) {
-	                            	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
-	                            	}
-	                            }
-	                        });
-	                 
-	        AlertDialog alert = builder.create();
-	        alert.show();
-		
+			builder = new AlertDialog.Builder(ContentSample.this);
+			builder.setMessage("Firefox not installed,redirecting to play store!")
+			.setCancelable(false)
+			.setPositiveButton("Ok",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					final String appName ="org.mozilla.firefox" ;
+					try {
+						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+appName)));
+					} catch (android.content.ActivityNotFoundException anfe) {
+						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
+					}
+				}
+			});
+
+			AlertDialog alert = builder.create();
+			alert.show();
+
 		}else {
 			if (inState != null) {
 				mActivePosition = inState.getInt(STATE_ACTIVE_POSITION);
@@ -180,7 +190,7 @@ public class ContentSample extends Activity implements OnClickListener{
 			items.add(new Category("FOSS Category"));
 			items.add(new Item("Software", R.drawable.ic_action_refresh_dark));
 			items.add(new Item("Videos", R.drawable.ic_action_select_all_dark));
-			
+
 			mList = new ListView(this);  
 			mAdapter = new MenuAdapter(items);
 			mList.setAdapter(mAdapter);
@@ -203,15 +213,15 @@ public class ContentSample extends Activity implements OnClickListener{
 			});
 
 		}
-		
-		
+
+
 
 	}
 
 	private void getResponseFromServer(String string) {
 		List<String> eventList = null;
 		boolean a = true;
-                List<ArrayList<String>> eventList1 = null;
+		List<ArrayList<String>> eventList1 = null;
 		if(mActivePosition == 0){
 			// query db
 			eventList = db.getAllEvents();
@@ -223,13 +233,13 @@ public class ContentSample extends Activity implements OnClickListener{
 		{
 
 			a = false;
-                      	eventList1 = db.getAllFossCat();
-                      	System.out.println("foss category "+eventList1);
+			eventList1 = db.getAllFossCat();
+			System.out.println("foss category "+eventList1);
 
 
 
 		}
-		 if(a==true&&eventList.size() != 0||eventList1.size() != 0){
+		if(a==true&&eventList.size() != 0||eventList1.size() != 0){
 
 			//try {
 			System.out.println("ENTRIES AVAILABLE IN DATABASE");
@@ -237,9 +247,9 @@ public class ContentSample extends Activity implements OnClickListener{
 				displayEvents(eventList);
 			}else if(mActivePosition == 3){
 
-			       eventList1 = db.getAllFossCat();
-                               System.out.println("offline foss cat"+eventList1);
-                               displayFoss(eventList1);
+				eventList1 = db.getAllFossCat();
+				System.out.println("offline foss cat"+eventList1);
+				displayFoss(eventList1);
 			}
 			//} catch (Exception e) {
 			//System.out.println("EXCEPTION: "+e.getMessage().toString());
@@ -325,73 +335,73 @@ public class ContentSample extends Activity implements OnClickListener{
 						System.out.println("PIXEL"+pixel);
 
 						if(pixel.equalsIgnoreCase("ffe4ce16")){
-//							Toast.makeText(ContentSample.this, "Tamil Nadu touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Tamil Nadu touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Tamil Nadu");
 						}if(pixel.equalsIgnoreCase("ff8056f8")){
-//							Toast.makeText(ContentSample.this, "kerala touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "kerala touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Kerala");
 						}if(pixel.equalsIgnoreCase("ff25ec9b")){
-//							Toast.makeText(ContentSample.this, "karnataka touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "karnataka touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Karnataka");
 						}if(pixel.equalsIgnoreCase("fff58dfe")){
-//							Toast.makeText(ContentSample.this, "andra pradesh touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "andra pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Andhra Pradesh");
 						}if(pixel.equalsIgnoreCase("fffccb02")){
-//							Toast.makeText(ContentSample.this, "maharashtra touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "maharashtra touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Maharashtra");
 						}if(pixel.equalsIgnoreCase("ffd37059")){
-//							Toast.makeText(ContentSample.this, "orissa touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "orissa touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Orissa");
 						}if(pixel.equalsIgnoreCase("ff2682ff")){
-//							Toast.makeText(ContentSample.this, "chhattiagarth touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "chhattiagarth touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Chattisgarh");
 						}if(pixel.equalsIgnoreCase("ff16b002")){
-//							Toast.makeText(ContentSample.this, "madhyapradesh touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "madhyapradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Madhya Pradesh");
 						}if(pixel.equalsIgnoreCase("ffa853f7")){
-//							Toast.makeText(ContentSample.this, "goa touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "goa touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Goa");
 						}if(pixel.equalsIgnoreCase("ffd7ea05")){
-//							Toast.makeText(ContentSample.this, "Jharkhand touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Jharkhand touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Jharkhand");
 						}if(pixel.equalsIgnoreCase("ffff600c")){
-//							Toast.makeText(ContentSample.this, "Rajasthan touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Rajasthan touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Rajasthan");
 						}if(pixel.equalsIgnoreCase("fffcff00")){
-//							Toast.makeText(ContentSample.this, "Uttar Pradesh touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Uttar Pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Uttar Pradesh");
 						}if(pixel.equalsIgnoreCase("ff62e6ff")){
-//							Toast.makeText(ContentSample.this, "Gujarat touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Gujarat touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Gujarat");
 						}if(pixel.equalsIgnoreCase("ffebc5de")){
-//							Toast.makeText(ContentSample.this, "Bihar touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Bihar touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Bihar");
 						}if(pixel.equalsIgnoreCase("fff8de01")){
-//							Toast.makeText(ContentSample.this, "Jammu Kashmir touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Jammu Kashmir touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Jammu Kashmir");   
 						}if(pixel.equalsIgnoreCase("ff794df8")){
-//							Toast.makeText(ContentSample.this, "Himachal Pradesh touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Himachal Pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Himachal Pradesh");
 						}if(pixel.equalsIgnoreCase("ffb12816")){
-//							Toast.makeText(ContentSample.this, "Uttarakhand touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Uttarakhand touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Uttarakhand");  
 						}if(pixel.equalsIgnoreCase("fffdf9ba")){
-//							Toast.makeText(ContentSample.this, "Punjab touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Punjab touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Punjab");
 						}if(pixel.equalsIgnoreCase("ffc1e1b2")){
-//							Toast.makeText(ContentSample.this, "Haryana touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Haryana touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Haryana");
 						}if(pixel.equalsIgnoreCase("fffcff00")){
-//							Toast.makeText(ContentSample.this, "Delhi touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Delhi touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Delhi");
 						}if(pixel.equalsIgnoreCase("ff5a25f3")){
-//							Toast.makeText(ContentSample.this, "West Bengal touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "West Bengal touched", Toast.LENGTH_SHORT).show();
 							build_dialog("West Bengal");
 						}if(pixel.equalsIgnoreCase("ff8010d4")){
-//							Toast.makeText(ContentSample.this, "Assam touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Assam touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Assam");
 						}if(pixel.equalsIgnoreCase("ffda7501")){
-//							Toast.makeText(ContentSample.this, "Arunachal Pradesh touched", Toast.LENGTH_SHORT).show();
+							//							Toast.makeText(ContentSample.this, "Arunachal Pradesh touched", Toast.LENGTH_SHORT).show();
 							build_dialog("Arunachal Pradesh");
 						}
 
@@ -411,9 +421,9 @@ public class ContentSample extends Activity implements OnClickListener{
 				MYpostParameters.add(new BasicNameValuePair("query_no","3"));
 				registerForContextMenu(foss_cat_list_view);
 				getResponseFromServer("http://spoken-tutorial.org/data/android_db_middleware.php");
-				
+
 				//getResponseFromServer("http://10.118.248.44/xampp//check.php");
-			
+
 			}else if (position==4) {
 				videoPath.clear();
 				mMenuDrawer.setContentView(R.layout.tab); // set the main
@@ -710,7 +720,7 @@ public class ContentSample extends Activity implements OnClickListener{
 
 	@Override
 	public void onBackPressed() {
-				
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Are you sure you want to exit?")
 		.setCancelable(false)
@@ -729,7 +739,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-		
+
 	}
 
 	private static class Item {
@@ -833,6 +843,8 @@ public class ContentSample extends Activity implements OnClickListener{
 	/** Single instance of our HttpClient */
 	private static HttpClient mHttpClient;
 
+
+
 	/**
 	 * Get our single instance of our HttpClient object.
 	 *
@@ -849,6 +861,8 @@ public class ContentSample extends Activity implements OnClickListener{
 		return mHttpClient;
 	}
 
+	List<ArrayList<String>> download_video_array = new ArrayList<ArrayList<String>>();
+
 	// DOWNLOAD ??
 	public class GetHttpResponseAsync extends AsyncTask<String, String, String> {
 		/**
@@ -857,7 +871,6 @@ public class ContentSample extends Activity implements OnClickListener{
 		String result = "";
 		@Override        	
 		public void onPreExecute() {
-			System.out.println("We are in PRE"+MYpostParameters.get(0));
 			super.onPreExecute();
 		}
 
@@ -867,6 +880,7 @@ public class ContentSample extends Activity implements OnClickListener{
 			try {
 				HttpClient client = getHttpClient();
 				HttpPost request = new HttpPost(aurl[0]);
+				System.out.println("my params "+MYpostParameters.get(0)+" "+MYpostParameters.get(1));
 				UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(MYpostParameters);
 				request.setEntity(formEntity);
 				HttpResponse response = client.execute(request);
@@ -908,9 +922,7 @@ public class ContentSample extends Activity implements OnClickListener{
 						String[] row = StringUtils.substringsBetween(rows[i],"(",")");
 						db.addContactPerson(new Contacts(row[0],row[1],row[3],row[2]));
 					}
-				}else if (mActivePosition == 3){   
-
-
+				}else if (mActivePosition == 3){
 					if(langflag == true)
 					{
 						for(int i=0;i<rows.length;i++){
@@ -918,37 +930,37 @@ public class ContentSample extends Activity implements OnClickListener{
 							db.addFossLanugaes(foss);
 							System.out.println("hello "+rows[i]);  
 						}
-						 openContextMenu(foss_cat_list_view);
+						openContextMenu(foss_cat_list_view);
 
 					}else if (fossflag == true && langflag == false){
 
 						FossCategory foss;
-						 for(int i=0;i<rows.length;i++){
-                                                      
-							 						List <String>List = new ArrayList<String>();
-                                                       String[] rows1 = rows[i].split(",");
-                                                       System.out.println("rows ..."+rows1.length);
-                                                       if(rows1.length==1)
-                                                       {
-                                                               //System.out.println("cat "+rows1[0]+"");
-                                                               foss = new FossCategory(i,rows1[0],"No Desc");
-                                                                       List.add(rows1[0]);
-                                                                       List.add("No Desc");
-                                                       }
-                                                       else
-                                                       {
-                                                               //System.out.println("cat "+rows1[0]+"");
-                                                               foss = new FossCategory(i,rows1[0],rows1[1]);
-                                                                      List.add(rows1[0]);
-                                                                       List.add(rows1[1]);
-                                                               
-                                                       }
-                                                        db.addFossCategory(foss);
-                                                       eventList1.add((ArrayList<String>) List);
-                                                }
-                                            
-                                              displayFoss(eventList1);  
-  
+						for(int i=0;i<rows.length;i++){
+
+							List <String>List = new ArrayList<String>();
+							String[] rows1 = rows[i].split(",");
+							System.out.println("rows ..."+rows1.length);
+							if(rows1.length==1)
+							{
+								//System.out.println("cat "+rows1[0]+"");
+								foss = new FossCategory(i,rows1[0],"No Desc");
+								List.add(rows1[0]);
+								List.add("No Desc");
+							}
+							else
+							{
+								//System.out.println("cat "+rows1[0]+"");
+								foss = new FossCategory(i,rows1[0],rows1[1]);
+								List.add(rows1[0]);
+								List.add(rows1[1]);
+
+							}
+							db.addFossCategory(foss);
+							eventList1.add((ArrayList<String>) List);
+						}
+
+						displayFoss(eventList1);  
+
 
 					}
 					if(fossflag == false && langflag == false)
@@ -964,28 +976,40 @@ public class ContentSample extends Activity implements OnClickListener{
 							}
 							eventList1.add((ArrayList<String>) List);
 						}
-						if(viewflag == true)
-						{
-							System.out.println("list:"+eventList1+""+"size"+eventList1.size());
-							
+						System.out.println("DOWNLOAD FLAG "+download);
+						if (download == null) {
+							if(viewflag == true)
+							{
+								System.out.println("list:"+eventList1+""+"size"+eventList1.size());
+
+								if(eventList1.size()==0){
+									Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+								}else {
+									displayFossGridDetails(eventList1);  
+
+								}
+
+							}else
+							{
+
+								if(eventList1.size()==0){
+									Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+								}else {
+									displayFossListDetails(eventList1);  
+
+								}
+
+							}
+						}else{
+							System.out.println("HEHEHE"+eventList1.toString());
 							if(eventList1.size()==0){
 								Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
 							}else {
-								displayFossGridDetails(eventList1);  
-
+								download_video_array = eventList1;
+								checkSpaceOnSdcardAndStartDownloading(download_video_array.get(0).get(4));
 							}
-							
-						}else
-						{
-							
-							if(eventList1.size()==0){
-								Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
-							}else {
-								displayFossListDetails(eventList1);  
-
-							}
-							
 						}
+
 					}
 				}
 			} catch (Exception e) {
@@ -1029,50 +1053,85 @@ public class ContentSample extends Activity implements OnClickListener{
 		for(int i = 0; i < event_row.size(); i++){
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("iamgeid", "" + "");
-            map.put("foss", "" + event_row.get(i).get(0));
-            map.put("subtitle","" + event_row.get(i).get(1));
+			map.put("foss", "" + event_row.get(i).get(0));
+			map.put("subtitle","" + event_row.get(i).get(1));
 
 			fillMaps.add(map);
 		}
 		adapterFoss(fillMaps,from,to);
-		//listenerOnFossCategoryListView();
-		foss_cat_list_view.setOnItemClickListener(new OnItemClickListener() {   
-			
-			public void onItemClick(AdapterView a, View v, int position, long id) {
-				
-				TextView c = (TextView) v.findViewById(R.id.soft_title);
-			    foss_name = c.getText().toString();
-
-			   // Toast.makeText(ContentSample.this,foss_name, Toast.LENGTH_SHORT).show();
-			    String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details td where td.id=tr.tutorial_detail_id and td.foss_category = '"+foss_name +"' order by tr.language";
-
-				MYpostParameters.removeAll(MYpostParameters);
-				MYpostParameters.add(new BasicNameValuePair("query",query4));
-				MYpostParameters.add(new BasicNameValuePair("query_no","4"));
-				// if internet is ON
-				
-					List<String> eventList = null;
-					eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
-					if(eventList.size()==0)
-					{
-						
-						new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
-						langflag = true;
-
-
-					}else{
-						langflag =false;
-						
-						openContextMenu(v);
-						
-					}
-					
-				}
-			
-			});
-		
-
 	}
+
+	String download = null;
+	public void downloadVideoZip(View v) {
+		download = ((TextView) v.findViewById(R.id.download)).getText().toString();
+		View parent = (View) v.getParent();
+		foss_name = ((TextView) parent.findViewById(R.id.soft_title)).getText().toString();
+		System.out.println("FOSSSSSS1"+foss_name);
+		Toast.makeText(ContentSample.this, "downloading", Toast.LENGTH_SHORT).show();
+		String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details " +
+				"td where td.id=tr.tutorial_detail_id and td.foss_category = '"+
+				foss_name +"' order by tr.language";
+
+		MYpostParameters.removeAll(MYpostParameters);
+		MYpostParameters.add(new BasicNameValuePair("query",query4));
+		MYpostParameters.add(new BasicNameValuePair("query_no","4"));
+
+		List<String> eventList = null;
+		eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
+		if(eventList.size()==0)
+		{
+
+			new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
+			langflag = true;
+
+
+		}else{
+			langflag =false;
+			openContextMenu(foss_cat_list_view);
+
+		}
+	}
+
+	/**
+	 * @return Number of Mega bytes available on dir
+	 */
+	public static long getAvailableSpaceInMB(String dir){
+		final long SIZE_KB = 1024L;
+		final long SIZE_MB = SIZE_KB * SIZE_KB;
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(dir);
+		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return availableSpace/SIZE_MB;
+	} 
+
+	public void getAndDisplayLanguages(View v) {
+		download = null;
+		foss_name = ((TextView) v.findViewById(R.id.soft_title)).getText().toString();
+		
+		String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details " +
+				"td where td.id=tr.tutorial_detail_id and td.foss_category = '"+
+				foss_name +"' order by tr.language";
+
+		MYpostParameters.removeAll(MYpostParameters);
+		MYpostParameters.add(new BasicNameValuePair("query",query4));
+		MYpostParameters.add(new BasicNameValuePair("query_no","4"));
+
+		List<String> eventList = null;
+		eventList = db.getAllFossLanguage(foss_name); // check for given foss category is available in there list 
+		if(eventList.size()==0)
+		{
+
+			new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
+			langflag = true;
+
+
+		}else{
+			langflag =false;
+			openContextMenu(foss_cat_list_view);
+
+		}
+	}
+
 	public void adapterFoss(List<HashMap<String, String>> fillMaps , String[] from,int[] to)
 	{
 
@@ -1102,9 +1161,9 @@ public class ContentSample extends Activity implements OnClickListener{
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int pos, long arg3) {
-				
-					v.intend_video(event_row, pos,ContentSample.this);
-				
+
+				v.intend_video(event_row, pos,ContentSample.this);
+
 			}
 		});
 
@@ -1125,13 +1184,13 @@ public class ContentSample extends Activity implements OnClickListener{
 		 */
 		foss_details_list_view.setOnItemClickListener(new OnItemClickListener() {
 
-		     AlertDialog.Builder builder;
+			AlertDialog.Builder builder;
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int pos, long arg3) {
-				
-					v.intend_video(event_row, pos,ContentSample.this);
+
+				v.intend_video(event_row, pos,ContentSample.this);
 
 			}
 		});
@@ -1140,7 +1199,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		viewflag = false;
 
 	}
-  
+
 	private void displayFossGridDetails(List<ArrayList<String>> event_row) {
 		final List<HashMap<String, String>> fillMaps;
 		String[] from;
@@ -1176,7 +1235,7 @@ public class ContentSample extends Activity implements OnClickListener{
 		from = new String[] {"srno", "fossname","level","language","tutorial","imageid"};
 		to = new int[] {R.id.sr_no, R.id.soft_title,R.id.soft_level,R.id.language,R.id.soft_link,R.id.right_image};
 		fillMaps = new ArrayList<HashMap<String, String>>();
-//		Toast.makeText(ContentSample.this, "Lisst:"+event_row, Toast.LENGTH_SHORT).show();
+		//		Toast.makeText(ContentSample.this, "Lisst:"+event_row, Toast.LENGTH_SHORT).show();
 		if(event_row.size()!=0)
 		{
 			for(int i = 0; i < event_row.size(); i++){
@@ -1207,13 +1266,13 @@ public class ContentSample extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
 		super.onCreateContextMenu(menu, v, menuInfo); 
 		info = (AdapterContextMenuInfo) menuInfo;
-		
+
 		menu.setHeaderTitle("Select language for "+foss_name+" video tutorial");  
 		List<String> eventList = null;
 		eventList = db.getAllFossLanguage(foss_name);
@@ -1237,51 +1296,95 @@ public class ContentSample extends Activity implements OnClickListener{
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		
-		String query5="select td.foss_category,tr.language,td.tutorial_level, td.tutorial_name ,tr.tutorial_video from CDEEP.tutorial_resources tr,CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='"+item.getTitle()+"'and td.foss_category='"+foss_name+"' ORDER BY td.tutorial_level, td.order_code ASC";
-		  
-		langflag = false;
-		fossflag = false;
-		language = item.getTitle().toString();
-		MYpostParameters.removeAll(MYpostParameters);
-		MYpostParameters.add(new BasicNameValuePair("query",query5));
-		MYpostParameters.add(new BasicNameValuePair("query_no","5"));
-		if (isInternetOn()) {  
-			System.out.println("INTERNET ON");
-			//List<String> eventList = null;
-			int count  = db.getTutorialCount(foss_name,item.getTitle().toString());  
-			if(count <= 0)
-			{
-				new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
-			}else{
-				List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
-				if(viewflag == true)
-				{
-					System.out.println("list:"+eventList+""+"size"+eventList.size());
-					
-					if(eventList.size()==0){
-						Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
-					}else {
-						displayFossGridDetails(eventList);  
+		if(download == null){
 
-					}
-					
-				}else
+			String query5="select td.foss_category,tr.language,td.tutorial_level, td.tutorial_name ,tr.tutorial_video from CDEEP.tutorial_resources tr,CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='"+item.getTitle()+"'and td.foss_category='"+foss_name+"' ORDER BY td.tutorial_level, td.order_code ASC";
+
+			langflag = false;
+			fossflag = false;
+			language = item.getTitle().toString();
+			MYpostParameters.removeAll(MYpostParameters);
+			MYpostParameters.add(new BasicNameValuePair("query",query5));
+			MYpostParameters.add(new BasicNameValuePair("query_no","5"));
+			if (isInternetOn()) {  
+				System.out.println("INTERNET ON");
+				//List<String> eventList = null;
+				int count  = db.getTutorialCount(foss_name,item.getTitle().toString());  
+				if(count <= 0)
 				{
-					
+					new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
+				}else{
+					List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
+					if(viewflag == true)
+					{
+						System.out.println("listed:"+eventList+""+"size"+eventList.size());
+
+						if(eventList.size()==0){
+							Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+						}else {
+							displayFossGridDetails(eventList);  
+
+						}
+
+					}else
+					{
+
+						if(eventList.size()==0){
+							Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
+						}else {
+							displayFossListDetails(eventList);  
+
+						}
+					}
+				}
+
+			}else{
+				System.out.println("INTERNET OFF");
+			}		
+		}else{
+			if(isInternetOn()) {
+				language = item.getTitle().toString();
+				// INTERNET IS AVAILABLE, DO STUFF..
+				Toast.makeText(ContentSample.this, "Connected to network"+foss_name+" "+language, Toast.LENGTH_SHORT).show();
+				String query5="select td.foss_category,tr.language,td.tutorial_level, td.tutorial_name ,tr.tutorial_video from CDEEP.tutorial_resources tr,CDEEP.tutorial_details td where tr.tutorial_status='accepted' and tr.tutorial_detail_id=td.id and tr.language='"+item.getTitle()+"'and td.foss_category='"+foss_name+"' ORDER BY td.tutorial_level, td.order_code ASC";
+
+				MYpostParameters.removeAll(MYpostParameters);
+				MYpostParameters.add(new BasicNameValuePair("query",query5));
+				MYpostParameters.add(new BasicNameValuePair("query_no","5"));
+
+				int count  = db.getTutorialCount(foss_name,item.getTitle().toString());  
+				if(count <= 0)
+				{
+					fossflag = false;
+					langflag = false;
+					new GetHttpResponseAsync().execute("http://spoken-tutorial.org/data/android_db_middleware.php");
+				}else{
+					List<ArrayList<String>> eventList = db.getTutorialList(foss_name,language);
 					if(eventList.size()==0){
 						Toast.makeText(ContentSample.this,"Sorry!! No Tutorials are available",Toast.LENGTH_LONG).show();
 					}else {
-						displayFossListDetails(eventList);  
+						download_video_array = eventList;
+						checkSpaceOnSdcardAndStartDownloading(download_video_array.get(0).get(4));
 
 					}
 				}
-			}
 
-		}else{
-			System.out.println("INTERNET OFF");
-		}		
-		
+			}else{
+				// NO INTERNET AVAILABLE, DO STUFF..
+				Toast.makeText(ContentSample.this, "Network disconnected", Toast.LENGTH_SHORT).show();
+				//rebootFlag = 1;
+				AlertDialog.Builder builder = new AlertDialog.Builder(ContentSample.this);
+				builder.setMessage("No Connection Found, please check your network setting!")
+				.setCancelable(false)
+				.setPositiveButton("OK",
+						new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+		}
 		return true;
 	}
 
@@ -1292,6 +1395,221 @@ public class ContentSample extends Activity implements OnClickListener{
 
 		return new BitmapDrawable( getResources(), bitmapScaled );
 	}
+	int counter = 0;
+	// DOWNLOAD ??
+	class DownloadFileAsync extends AsyncTask<String, String, String> {
+		/**
+		 * download videos from URL and write in destination mnt/sdcard
+		 **/
+		String download_destination;
+		@Override        	
+		public void onPreExecute() {
+			mProgressDialog = new ProgressDialog(ContentSample.this);
+			mProgressDialog.setMessage("Downloading "+foss_name+" : "+download_video_array.get(counter).get(4)+" in "+language+" language...");
+			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			mProgressDialog.setCancelable(false);
+			mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel",new DialogInterface.OnClickListener() {
 
+				public void onClick(DialogInterface dialog, int which) {
+					final AlertDialog.Builder builder = new AlertDialog.Builder(ContentSample.this);
+					builder.setMessage("Are you sure you want cancel downloading?")
+					.setCancelable(true)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					})
+					.setNegativeButton("No", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							mProgressDialog.show();
+						}
+					});
+					AlertDialog alert = builder.create();
+					alert.show();
+
+				}
+			});
+			mProgressDialog.show();
+			super.onPreExecute();
+		}
+
+		public String doInBackground(String... aurl) {
+			int count;
+
+			try {
+				URL url = new URL(aurl[0]);
+				download_destination = aurl[1];
+				URLConnection conexion = url.openConnection();
+				conexion.connect();
+
+				int lenghtOfFile = conexion.getContentLength();
+
+				InputStream input = new BufferedInputStream(url.openStream());
+				OutputStream output = new FileOutputStream(
+						download_destination+"/"+download_video_array.get(counter).get(3)+".ogv");
+
+				byte data[] = new byte[1024];
+
+				long total = 0;
+
+				while ((count = input.read(data)) != -1) {
+					total += count;
+					publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+					output.write(data, 0, count);
+				}
+				output.flush();
+				output.close();
+				input.close();
+			} catch (Exception e) {
+			}
+			return null;
+
+		}
+
+		public void onProgressUpdate(String... progress) {
+			mProgressDialog.setProgress(Integer.parseInt(progress[0]));
+		}
+
+		public void onPostExecute(String unused) {
+			try {
+				mProgressDialog.dismiss();
+				counter ++;
+				checkSpaceOnSdcardAndStartDownloading(download_video_array.get(counter).get(4));
+			} catch (Exception e) {
+				Toast.makeText(ContentSample.this, "Downloading complete", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
 	
+	public void checkSpaceOnSdcardAndStartDownloading(String video_url){
+		try {
+			/**
+			 * download video
+			 **/
+			String url = "http://video.spoken-tutorial.org/"+video_url;
+			String dest;
+
+			/*
+			 * check free space available in /mnt/sdcard, it should be greater than 15MB
+			 * if YES, download video zip
+			 */
+
+			if(getAvailableSpaceInMB("mnt/sdcard") > 15L){
+				/*
+				* create <package_name> dirrectory under /mnt/sdcard/spoken_tutorial_videos
+				*/
+				// System.out.println("APP ID IS"+appid);
+				File path = new File(Environment.getExternalStorageDirectory() + "/spoken_tutorial_videos");
+				if (!path.exists()) {
+					path.mkdir();	
+					File foss_dir = new File(Environment.getExternalStorageDirectory() + "/spoken_tutorial_videos/" + foss_name);
+					if (!foss_dir.exists()) {
+						foss_dir.mkdir();
+						// System.out.println("folder CREATED");
+						File dir = new File(Environment.getExternalStorageDirectory() + "/spoken_tutorial_videos/"+foss_name+"/" + language);
+						if (!dir.exists()){
+							dir.mkdir();
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}else{
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}
+					}else{
+						// System.out.println("folder CREATED");
+						File dir = new File(Environment.getExternalStorageDirectory() + "/spoken_tutorial_videos/"+foss_name+"/" + language);
+						if (!dir.exists()){
+							dir.mkdir();
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}else{
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}
+					}
+				}else {
+					System.out.println("path already exist");
+					File foss_dir = new File(Environment.getExternalStorageDirectory() + "/spoken_tutorial_videos/" + foss_name);
+					if (!foss_dir.exists()) {
+						foss_dir.mkdir();
+						// System.out.println("folder CREATED");
+						File dir = new File(Environment.getExternalStorageDirectory() + "/spoken_tutorial_videos/"+foss_name+"/" + language);
+						if (!dir.exists()){
+							dir.mkdir();
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}else{
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}
+					}else{
+						// System.out.println("folder CREATED");
+						File dir = new File(Environment.getExternalStorageDirectory() + "/spoken_tutorial_videos/"+foss_name+"/" + language);
+						if (!dir.exists()){
+							dir.mkdir();
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}else{
+							File level_dir = new File(Environment.getExternalStorageDirectory() +
+									"/spoken_tutorial_videos/"+foss_name+"/" + language +"/"+download_video_array.get(counter).get(2));
+							if (!level_dir.exists()) {
+								System.out.println("CREATING DIR");
+								level_dir.mkdir();
+							}
+						}
+					}
+				}
+				/*   
+				 * get the http response from server
+				 */
+				//new GetHttpResponseAsync().execute("http://spoken-tutorial.iitb.ac.in/create_zip.php");
+				dest = "mnt/sdcard/spoken_tutorial_videos"+"/"+foss_name+"/"+language+"/"+download_video_array.get(counter).get(2);
+				new DownloadFileAsync().execute(url,dest);
+
+			}else{
+				AlertDialog.Builder builder = new AlertDialog.Builder(ContentSample.this);
+				builder.setMessage("No enough space on sdcard!")
+				.setCancelable(false)
+				.setPositiveButton("Ok",
+						new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+		} catch (Exception e) {
+			Toast.makeText(ContentSample.this, "Error in downloading", Toast.LENGTH_SHORT).show();
+		}
+		
+	}
 }
