@@ -5,17 +5,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:background="@drawable/list_selector" >
+        android:paddingRight="10dip" >
         
     	<ImageView
             android:id="@+id/image_id"
             android:layout_width="60dip"
             android:layout_height="60dip"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.05" />    
+            android:layout_gravity="center_vertical"/>    
             
     	<LinearLayout 
         android:layout_width="match_parent"
@@ -23,9 +19,11 @@
         android:orientation="vertical"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:paddingLeft="10dip"
-        android:paddingRight="5dip"
-        android:onClick="getAndDisplayLanguages">
+        android:onClick="getAndDisplayLanguages"
+        android:background="@drawable/list_selector">
     	    <!-- Software Name-->
 		    <TextView
 		        android:id="@+id/soft_title"
@@ -51,13 +49,13 @@
 
     	<Button
     	    android:id="@+id/download"
-            android:layout_weight="0.05"
-            android:layout_width="60dip"
-            android:layout_height="60dip"
-            android:text=""
-            android:background="@drawable/download_square"
-            android:layout_gravity="center_vertical"
-            android:gravity="right"
-            android:onClick="downloadVideoZip" />
+    	    android:layout_width="60dp"
+    	    android:layout_height="60dip"
+    	    android:layout_gravity="center_vertical"
+    	    android:background="@drawable/download"
+    	    android:gravity="right"
+    	    android:onClick="downloadMultipleVideo"
+    	    android:text="" />
+
 </LinearLayout>
 

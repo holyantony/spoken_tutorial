@@ -141,8 +141,6 @@ public class ContentSample extends Activity implements OnClickListener {
 		String status = v.appInstalledOrNot("org.mozilla.firefox",
 				ContentSample.this);
 		System.out.println("status1:" + status);
-		Toast.makeText(ContentSample.this, "Status:" + status,
-				Toast.LENGTH_SHORT).show();
 		if ("false".equals(status)) {
 
 			builder = new AlertDialog.Builder(ContentSample.this);
@@ -494,7 +492,7 @@ public class ContentSample extends Activity implements OnClickListener {
 									build_dialog("Arunachal Pradesh");
 								}
 							} catch (Exception e) {
-								Toast.makeText(ContentSample.this, "Please try again",Toast.LENGTH_SHORT).show();
+								Toast.makeText(ContentSample.this, "Please ON internet connection",Toast.LENGTH_SHORT).show();
 							}
 
 							return false;
@@ -502,7 +500,7 @@ public class ContentSample extends Activity implements OnClickListener {
 					});
 
 				}catch (Exception e) {
-					Toast.makeText(ContentSample.this, "Please try again",Toast.LENGTH_SHORT).show();
+					Toast.makeText(ContentSample.this, "Please ON internet connection",Toast.LENGTH_SHORT).show();
 				}
 			} else if (position == 3) {
 				try {
@@ -1210,16 +1208,18 @@ public class ContentSample extends Activity implements OnClickListener {
 	}
 
 	String download = null;
-
-	public void downloadVideoZip(View v) {
+	View download_button = null;
+	public void downloadMultipleVideo(View v) {
+		download_button = v; 
+		v.setBackgroundResource(R.drawable.download_onpressed);
 		download = ((TextView) v.findViewById(R.id.download)).getText()
 				.toString();
 		View parent = (View) v.getParent();
 		foss_name = ((TextView) parent.findViewById(R.id.soft_title)).getText()
 				.toString();
 		System.out.println("FOSSSSSS1" + foss_name);
-		Toast.makeText(ContentSample.this, "downloading", Toast.LENGTH_SHORT)
-		.show();
+		//Toast.makeText(ContentSample.this, "downloading", Toast.LENGTH_SHORT)
+		//.show();
 		String query4 = "select distinct tr.language from CDEEP.tutorial_resources tr, CDEEP.tutorial_details "
 				+ "td where td.id=tr.tutorial_detail_id and td.foss_category = '"
 				+ foss_name + "' order by tr.language";
@@ -1510,12 +1510,16 @@ public class ContentSample extends Activity implements OnClickListener {
 			}
 		} else {
 			if (isInternetOn()) {
-				System.out.println("INTERNET ON");
+				System.out.println("INTERNET is ON");
 			} else {
 				Toast.makeText(ContentSample.this,
 						"Please ON internet connection", Toast.LENGTH_SHORT)
 						.show();
-				System.out.println("INTERNET OFF");
+				System.out.println("INTERNET is OFF");
+				if (download != null) {
+					download_button.setBackgroundResource(R.drawable.download);
+				}
+				
 			}
 		}
 	}
@@ -1638,6 +1642,17 @@ public class ContentSample extends Activity implements OnClickListener {
 		return true;
 	}
 
+	
+	@Override
+	public void onContextMenuClosed(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onContextMenuClosed(menu);
+		if (download != null) {
+			download_button.setBackgroundResource(R.drawable.download);
+		}
+		
+	}
+	
 	public Drawable getScaledIcon(Drawable drawable, int dstWidth, int dstHeight) {
 
 		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -1684,8 +1699,6 @@ public class ContentSample extends Activity implements OnClickListener {
 											mProgressDialog.dismiss();
 											Toast.makeText(ContentSample.this, "Downloading cancelled",
 													Toast.LENGTH_SHORT).show();
-											DownloadFileAsync dfc = new DownloadFileAsync();
-											dfc.isCancelled();
 											File file = new File(download_destination
 													+ "/" + download_video_array.get(counter).get(3)
 													+ ".ogv");
