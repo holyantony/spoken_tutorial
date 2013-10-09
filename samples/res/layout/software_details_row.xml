@@ -5,6 +5,7 @@
     android:background="@drawable/list_selector"
     android:orientation="horizontal"
     android:padding="10dip"
+    android:longClickable="true"
     android:onClick="downloadSelectedVideo" >
 
     <TextView

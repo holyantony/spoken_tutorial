@@ -731,15 +731,38 @@ public class ContentSample extends Activity implements OnClickListener {
 		CheckBox cb = (CheckBox)v.findViewById(R.id.cbDownloadVideo);
 		TextView index = null;
 		if (cb.isChecked()) {
-			Toast.makeText(ContentSample.this, "checked", Toast.LENGTH_LONG).show();
+			System.out.println(cb.getId());
+			//Toast.makeText(ContentSample.this, "checked"+cb.getId(), Toast.LENGTH_LONG).show();
+			
 			View parent = (View) cb.getParent();
 			index = (TextView)parent.findViewById(R.id.sr_no);
 			Toast.makeText(ContentSample.this, index.getText(), Toast.LENGTH_LONG).show();
 			selectedVideoIndex.add(Integer.parseInt(index.getText().toString()));
+			//setChecked();
 		}
+		//cb.setChecked(true);
 		System.out.println("INDEX "+selectedVideoIndex);
 	}
 	
+//	private void setChecked() {
+//		for (int i = 0; i < download_video_array.size(); i++) {
+//			View row;
+//			if (viewflag) {
+//				row = foss_details_grid_view.getChildAt(i);
+//			}else{
+//				row = foss_details_list_view.getChildAt(i);
+//			}
+//			//CheckBox cb = (CheckBox)row.findViewById(R.id.cbDownloadVideo);
+//			TextView index = (TextView)row.findViewById(R.id.sr_no);
+//			if (selectedVideoIndex.contains(Integer.parseInt(index.getText().toString()))) {
+//				System.out.println("CONTAINS");
+//			}else {
+//				System.out.println("NOT CONTAINS");
+//			}
+//		}
+//		
+//	}
+
 	public void downloadSelectedVideo(View vw) {
 		TextView sr = (TextView)vw.findViewById(R.id.sr_no);
 		downloadSingleVideo(v, download_video_array, Integer.parseInt(sr.getText().toString()) - 1);
@@ -1562,6 +1585,33 @@ public class ContentSample extends Activity implements OnClickListener {
 
 		} else {
 			System.out.println("INTERNET OFF");
+			List<ArrayList<String>> eventList = db.getTutorialList(
+					foss_name, language);
+			download_video_array = eventList;
+			if (viewflag == true) {
+				System.out.println("listed:" + eventList + "" + "size"
+						+ eventList.size());
+
+				if (eventList.size() == 0) {
+					Toast.makeText(ContentSample.this,
+							"Please ON internet connection",
+							Toast.LENGTH_LONG).show();
+				} else {
+					displayFossGridDetails(eventList);
+
+				}
+
+			} else {
+
+				if (eventList.size() == 0) {
+					Toast.makeText(ContentSample.this,
+							"Please ON internet connection",
+							Toast.LENGTH_LONG).show();
+				} else {
+					displayFossListDetails(eventList);
+
+				}
+			}
 		}
 
 		return true;
