@@ -10,6 +10,8 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" 
    	android:onClick="downloadSelectedVideo"
+   	android:id="@+id/grid_row"
+   	
   	android:background="@drawable/list_selector">  
 
     <ImageView
@@ -43,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:onClick="setCounter" />
+         />
         
         </LinearLayout>
 

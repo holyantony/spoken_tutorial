@@ -1,73 +1,5 @@
 package net.simonvt.menudrawer.samples;
 
-import net.simonvt.menudrawer.MenuDrawer;
-
-import android.R.integer;
-import android.animation.AnimatorSet.Builder;
-import android.app.Activity;
-import android.app.ActionBar.LayoutParams;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.LocalActivityManager;
-import android.app.ProgressDialog;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.StatFs;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.telephony.SmsManager;
-import android.text.Html;
-import android.util.Base64;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.GridView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.SimpleAdapter;
-import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -84,23 +16,74 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
+import net.simonvt.menudrawer.MenuDrawer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-
-import workshops.database.handler.*;
+import workshops.database.handler.Contacts;
+import workshops.database.handler.DatabaseHandler;
+import workshops.database.handler.Event;
+import workshops.database.handler.FossCategory;
+import android.app.ActionBar.LayoutParams;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.LocalActivityManager;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
+import android.text.Html;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SimpleAdapter;
+import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 ;
 
@@ -137,6 +120,14 @@ public class ContentSample extends Activity implements OnClickListener {
 	video v = new video();
 	AlertDialog.Builder builder;
 	String foss_name1;
+	private boolean[] thumbnailsselection;
+//	private String[] arrPath;
+	private int count1;
+	private Bitmap[] thumbnails;
+	private String[] arrPath;
+	private ImageAdapter imageAdapter;
+	ViewHolder holder;
+
 
 	@Override
 	protected void onCreate(Bundle inState) {
@@ -187,29 +178,23 @@ public class ContentSample extends Activity implements OnClickListener {
 			SubtitleStringArray = getResources().getStringArray(
 					R.array.software_subtitle);
 
-			dr = new int[] { R.drawable.advanced_cpp, R.drawable.bash,
-					R.drawable.blender, R.drawable.c_and_cpp,
-					R.drawable.cell_designer, R.drawable.digital_divide,
-					R.drawable.drupal, R.drawable.firefox,
-					R.drawable.gchempaint, R.drawable.geogebra,
-					R.drawable.geogebra_for_engineering_drawing,
-					R.drawable.gimp, R.drawable.gns3, R.drawable.gnukhata,
-					R.drawable.gschem, R.drawable.java, R.drawable.kicad,
-					R.drawable.ktouch, R.drawable.kturtal, R.drawable.latex,
-					R.drawable.libre_office_base_icon_gs_base,
-					R.drawable.libre_office_calc_icon_gs_calc,
-					R.drawable.libre_office_draw_icon_gs_draw,
-					R.drawable.libre_office_impress_icon_gs_impress,
-					R.drawable.libre_office_math_icon_gs_math,
-					R.drawable.libre_office_writer_icon_gs_writer,
-					R.drawable.linux, R.drawable.netbeans, R.drawable.ngspice,
-					R.drawable.openfoam_ogo, R.drawable.orca, R.drawable.perl,
-					R.drawable.php_mysql, R.drawable.python, R.drawable.python,
-					R.drawable.qcad, R.drawable.ruby, R.drawable.scilab,
-					R.drawable.selenium, R.drawable.single_board_heater_system,
-					R.drawable.spokentutorial, R.drawable.step,
-					R.drawable.thunderbird, R.drawable.tux_typing,
-					R.drawable.what_is_spoken_tutorial, R.drawable.x_fig };
+			dr = new int[] { R.drawable.advanced_cpp, R.drawable.blender,
+					R.drawable.c_and_cpp, R.drawable.celldesigner, R.drawable.digital_divide,
+					R.drawable.drupal, R.drawable.firefox, R.drawable.gchempaint,
+					R.drawable.geogebra, R.drawable.gimp, R.drawable.gns3,
+					R.drawable.gnukhata, R.drawable.gschem, R.drawable.java,
+					R.drawable.java_business_application, R.drawable.kicad, R.drawable.ktouch,
+					R.drawable.kturtle, R.drawable.latex, R.drawable.libreoffice_suite_base,
+					R.drawable.libreoffice_suite_calc, R.drawable.libreoffice_suite_draw, R.drawable.libreoffice_suite_impress,
+					R.drawable.libreoffice_suite_math, R.drawable.libreoffice_suite_writer, R.drawable.linux,
+					R.drawable.netbeans, R.drawable.ngspice, R.drawable.openfoam,
+					R.drawable.perl, R.drawable.php_and_mysql, R.drawable.python,
+					R.drawable.python_old_version, R.drawable.qcad, R.drawable.ruby,
+					R.drawable.scilab, R.drawable.selenium, R.drawable.single_board_heater_system,
+					 R.drawable.spoken_tutorial_technology, R.drawable.step,
+					R.drawable.thump, R.drawable.thunderbird, R.drawable.tux_typing,
+					R.drawable.what_is_spoken_tutorial, R.drawable.xfig, R.drawable.orca,
+					R.drawable.geogebra_for_engineering_drawing,R.drawable.bash  };
 
 			List<Object> items = new ArrayList<Object>();
 			// items.add(new Category("About"));
@@ -760,13 +745,18 @@ public class ContentSample extends Activity implements OnClickListener {
 //				System.out.println("NOT CONTAINS");
 //			}
 //		}
-//		
+//		  
 //	}
 
 	public void downloadSelectedVideo(View vw) {
 		TextView sr = (TextView)vw.findViewById(R.id.sr_no);
-		downloadSingleVideo(v, download_video_array, Integer.parseInt(sr.getText().toString()) - 1);
-	}
+//		holder.srno = (TextView) vw.findViewById(R.id.sr_no);
+
+		System.out.println("downloadSelectedVideo");
+//		ImageAdapter ia=new ImageAdapter(null);
+		System.out.println("Position:"+sr.getText().toString());
+		downloadSingleVideo(v, download_video_array, Integer.parseInt(sr.getText().toString()) - 1);   
+	} 
 
 	public void build_dialog(String state) {
 		ArrayList<String> contact = db.getContactForState(state);
@@ -774,7 +764,7 @@ public class ContentSample extends Activity implements OnClickListener {
 		View layout = inflater.inflate(R.layout.person_detail, null);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
-				ContentSample.this);
+				ContentSample.this); 
 		builder.setView(layout);
 		builder.setIcon(R.drawable.contact_logo);
 		builder.setTitle(contact.get(1).toString() + " , "
@@ -1263,22 +1253,45 @@ public class ContentSample extends Activity implements OnClickListener {
 	}
 
 	private void displayFoss(List<ArrayList<String>> event_row) {
-		String[] from = new String[] { "iamgeid", "foss", "subtitle" };
-		int[] to = new int[] { R.id.image_id, R.id.soft_title,
-				R.id.soft_sub_title };
+		 String[] from = new String[] {"iamgeid","foss","subtitle"};
+	        int[] to = new int[] {R.id.image_id, R.id.soft_title,R.id.soft_sub_title};
+	        ArrayList<String> image_path= new ArrayList<String>();
 
-		final List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
+	        System.out.println("list:"+event_row+""+"size"+event_row.size());
 
-		for (int i = 0; i < event_row.size(); i++) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("iamgeid", "" + "");
-			map.put("foss", "" + event_row.get(i).get(0));
-			map.put("subtitle", "" + event_row.get(i).get(1));
+	        System.out.println("size1:"+event_row.size());       
+	    
+	        for (int i = 0; i < dr.length; i++) {
+				  String imageName1 = getResources().getResourceName(dr[i]);
+		            System.out.println("Name:"+imageName1);
+		            image_path.add(imageName1);
+		            System.out.println("image_path:"+image_path);
+			 	}        
+//	       System.out.println("Foeeeesss:"+event_row.get(1).get(0)+""+"Size"+event_row.get(1).get(0).length());       
+			final List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
+			for (int i = 0; i < event_row.size(); i++) {
+				String strOutput = event_row.get(i).get(0).replace("-", "_")
+						.replace("+", "p");
+				System.out.println("List.....:" + strOutput);
+	       	
+	       	
+	           HashMap<String, String> map = new HashMap<String, String>();
+	           int index = image_path.indexOf("net.simonvt.menudrawer.samples:drawable/"+strOutput.toLowerCase());   
+	           System.out.println("Position:"+index);
+	           if(index==-1){
+	               map.put("iamgeid", "");
 
-			fillMaps.add(map);
+	           }else {
+	               map.put("iamgeid",""+getResources().getIdentifier(image_path.get(index).toString(), "drawable", getPackageName()));
+		            map.put("foss", ""+event_row.get(i).get(0));
+		            map.put("subtitle","" + event_row.get(i).get(1));
+
+		            fillMaps.add( map);
+	         
+	       }
+	       
+	        adapterFoss(fillMaps,from,to);
 		}
-		adapterFoss(fillMaps, from, to);
-
 		foss_cat_list_view.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView a, View v, int position, long id) {
@@ -1342,24 +1355,7 @@ public class ContentSample extends Activity implements OnClickListener {
 
 	}
 
-	public void adapterFossGridDetails(List<HashMap<String, String>> fillMaps,
-			String[] from, int[] to, final List<ArrayList<String>> event_row) {
-		mMenuDrawer.setContentView(R.layout.grid_foss_details); // set the main
-		// content view
-		// list row
-		foss_details_grid_view = (GridView) findViewById(R.id.gridview1); // get
-		// the
-		// list
-		// row
-		// id
-
-		SimpleAdapter adapter;
-
-		adapter = new SimpleAdapter(ContentSample.this, fillMaps,
-				R.layout.software_details_grid_view, from, to);
-		foss_details_grid_view.setAdapter(adapter);
-		viewflag = true;
-	}
+	
 
 	public void adapterFossListDetails(List<HashMap<String, String>> fillMaps,
 			String[] from, int[] to, final List<ArrayList<String>> event_row) {
@@ -1387,7 +1383,7 @@ public class ContentSample extends Activity implements OnClickListener {
 	boolean single_video = false;
 
 	public void downloadSingleVideo(final video v,
-			final List<ArrayList<String>> event_row, final int position) {
+		final List<ArrayList<String>> event_row, final int position) {
 		final CharSequence[] items = { "View online video", "Download video" };
 		// creating a dialog box for popup
 		AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -1421,39 +1417,18 @@ public class ContentSample extends Activity implements OnClickListener {
 	}
 
 	private void displayFossGridDetails(List<ArrayList<String>> event_row) {
-		final List<HashMap<String, String>> fillMaps;
-		String[] from;
-		int[] to;
-		from = new String[] { "srno", "fossname", "tutorial", "language" };
-		to = new int[] { R.id.sr_no, R.id.soft_title, R.id.soft_link,
-				R.id.language };
-		fillMaps = new ArrayList<HashMap<String, String>>();
-		Drawable d = getResources().getDrawable(R.drawable.thump);
-		if (event_row.size() != 0) {
-			for (int i = 0; i < event_row.size(); i++) {
-				int count = i;
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("srno", "" + ++count);
-				map.put("fossname", "" + event_row.get(i).get(0)); // foss
-				// category
-				// name
-				map.put("language", "" + event_row.get(i).get(1)); // level like
-				// c2 c3 ...
-				// map.put("level", "" + event_row.get(i).get(2)); // selected
-				// language like English , Hindi ...
-				map.put("tutorial", "" + event_row.get(i).get(3)); // Tutorial
-				// Name
-				// event_row.get(4); // link for video
-				// map.put("imageid","" +getScaledIcon(d,100,100));
-				fillMaps.add(map);
-			}
-		} else {
-			Toast.makeText(ContentSample.this,
-					"Sorry!! No Tutorials are available", Toast.LENGTH_LONG)
-					.show();
-		}
-		adapterFossGridDetails(fillMaps, from, to, event_row);
+		mMenuDrawer.setContentView(R.layout.grid_foss_details); // set the main
+		this.count1 = event_row.size();
+		this.thumbnails = new Bitmap[this.count1];
+		this.arrPath = new String[this.count1];
+		this.thumbnailsselection = new boolean[this.count1];
+		GridView imagegrid = (GridView) findViewById(R.id.gridview1);
+		imageAdapter = new ImageAdapter(event_row);
+		imagegrid.setAdapter(imageAdapter);
+		viewflag = true;
 	}
+	public void test(){
+System.out.println("heeelllloo");	}
 
 	private void displayFossListDetails(List<ArrayList<String>> event_row) {
 		final List<HashMap<String, String>> fillMaps;
@@ -1771,7 +1746,11 @@ public class ContentSample extends Activity implements OnClickListener {
 			 **/
 			String url = "http://video.spoken-tutorial.org/" + video_url;
 			String dest;
-			if (selectedVideosFlag) {
+			
+			if (single_video) {
+				video_category = download_video_array.get(counter).get(2);
+				video_name = download_video_array.get(counter).get(3);
+			}else if (selectedVideosFlag) {
 				video_category = selectedVideos.get(counter).get(2);
 				video_name = selectedVideos.get(counter).get(3);
 			}else{
@@ -1968,5 +1947,120 @@ public class ContentSample extends Activity implements OnClickListener {
 //					Toast.LENGTH_SHORT).show();
 //		}
 
+	}
+	
+	public class ImageAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+		List<ArrayList<String>> event_row1;
+
+
+		public ImageAdapter(List<ArrayList<String>> event_row) {
+			mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			System.out.println("Liiissst:"+event_row);
+			event_row1=event_row;
+		}
+
+		public int getCount() {
+			return count1;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+ 
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			System.out.println("Liiissst1111:"+event_row1);
+
+			if (convertView == null) {
+				holder = new ViewHolder();
+				convertView = mInflater.inflate(
+						R.layout.software_details_grid_view, null);
+				holder.imageview = (ImageView) convertView.findViewById(R.id.right_image);
+				holder.checkbox = (CheckBox) convertView.findViewById(R.id.cbDownloadVideo);
+				holder.srno = (TextView) convertView.findViewById(R.id.sr_no);
+				holder.fossname = (TextView) convertView.findViewById(R.id.soft_title);
+				holder.tutorial = (TextView) convertView.findViewById(R.id.soft_link);
+				holder.language = (TextView) convertView.findViewById(R.id.language);
+				holder.language = (TextView) convertView.findViewById(R.id.language);
+
+				holder.grid_row = (LinearLayout) convertView.findViewById(R.id.grid_row);
+
+
+				convertView.setTag(holder);
+			}
+			else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+			holder.checkbox.setId(position);
+			holder.imageview.setId(position);
+			holder.checkbox.setOnClickListener(new OnClickListener() {
+				
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					CheckBox cb = (CheckBox) v;
+					int id = cb.getId();
+					if (thumbnailsselection[id]){
+						cb.setChecked(false);
+						thumbnailsselection[id] = false;
+					} else {
+						cb.setChecked(true);
+						thumbnailsselection[id] = true;
+					}
+				}
+			});
+
+			holder.imageview.setImageResource(R.drawable.thump);
+			holder.checkbox.setChecked(thumbnailsselection[position]);
+			
+			
+			System.out.println("selections:"+thumbnailsselection[position]);
+			holder.srno.setText(String.valueOf(position+1));
+
+			holder.fossname.setText(event_row1.get(position).get(0));
+			holder.tutorial.setText(event_row1.get(position).get(3));
+			holder.language.setText(event_row1.get(position).get(1));
+
+			holder.id = position;
+			
+			holder.checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				
+				@Override
+				public void onCheckedChanged(CompoundButton arg0, boolean state) {
+					if(state == true){
+						System.out.println("checked.......");
+						selectedVideoIndex.add(arg0.getId()+1);
+						System.out.println("Indexes1:"+selectedVideoIndex);
+
+					}else {
+						System.out.println("unchecked.......");
+						for (int i = 0; i < selectedVideoIndex.size(); i++) {
+                            if (selectedVideoIndex.get(i) == arg0.getId()+1) {
+                                    selectedVideoIndex.remove(i);
+                            }
+						}
+						System.out.println("Indexes2:"+selectedVideoIndex);
+					}
+					
+				}
+			});
+			
+			
+			
+			return convertView;
+		}
+	}
+	class ViewHolder {
+		ImageView imageview;
+		CheckBox checkbox;
+		TextView srno;
+		TextView fossname;
+		TextView tutorial;
+		TextView language;
+		LinearLayout grid_row;
+		int id;
 	}
 }
