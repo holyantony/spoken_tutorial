@@ -191,10 +191,10 @@ public class ContentSample extends Activity implements OnClickListener {
 					R.drawable.perl, R.drawable.php_and_mysql, R.drawable.python,
 					R.drawable.python_old_version, R.drawable.qcad, R.drawable.ruby,
 					R.drawable.scilab, R.drawable.selenium, R.drawable.single_board_heater_system,
-					 R.drawable.spoken_tutorial_technology, R.drawable.step,
+					R.drawable.spoken_tutorial_technology, R.drawable.step,
 					R.drawable.thump, R.drawable.thunderbird, R.drawable.tux_typing,
 					R.drawable.what_is_spoken_tutorial, R.drawable.xfig, R.drawable.orca,
-					R.drawable.geogebra_for_engineering_drawing,R.drawable.bash  };
+					R.drawable.geogebra_for_engineering_drawing,R.drawable.bash };
 
 			List<Object> items = new ArrayList<Object>();
 			// items.add(new Category("About"));
@@ -547,44 +547,7 @@ public class ContentSample extends Activity implements OnClickListener {
 				// tabHost.newTabSpec("Web").setIndicator("Web").setContent(intent);
 				// tabHost.addTab(spec);
 
-				tabHost.setOnTabChangedListener(new OnTabChangeListener() {
-
-					@Override
-					public void onTabChanged(String tabId) {
-						// if("false".equals(status)){
-						// builder = new AlertDialog.Builder(from_sdcard.this);
-						// builder.setMessage("Rock player2 not installed,redirecting to play store!")
-						// .setCancelable(false)
-						// .setPositiveButton("Ok",
-						// new DialogInterface.OnClickListener() {
-						// public void onClick(DialogInterface dialog, int id) {
-						// final String appName
-						// ="com.redirectin.rockplayer.android.unified.lite" ;
-						// try {
-						// startActivity(new Intent(Intent.ACTION_VIEW,
-						// Uri.parse("market://details?id="+appName)));
-						// } catch (android.content.ActivityNotFoundException
-						// anfe) {
-						// startActivity(new Intent(Intent.ACTION_VIEW,
-						// Uri.parse("http://play.google.com/store/apps/details?id="+appName)));
-						// }
-						// }
-						// });
-						//
-						// AlertDialog alert = builder.create();
-						// alert.show();
-						//
-						// Toast.makeText(ContentSample.this, "Not installed",
-						// Toast.LENGTH_SHORT).show();
-						//
-						// }else {
-						// v.list_intent(position, from_sdcard.this);
-						//
-						// }
-						//
-
-					}
-				});
+			
 
 			}
 
@@ -729,31 +692,10 @@ public class ContentSample extends Activity implements OnClickListener {
 		System.out.println("INDEX "+selectedVideoIndex);
 	}
 	
-//	private void setChecked() {
-//		for (int i = 0; i < download_video_array.size(); i++) {
-//			View row;
-//			if (viewflag) {
-//				row = foss_details_grid_view.getChildAt(i);
-//			}else{
-//				row = foss_details_list_view.getChildAt(i);
-//			}
-//			//CheckBox cb = (CheckBox)row.findViewById(R.id.cbDownloadVideo);
-//			TextView index = (TextView)row.findViewById(R.id.sr_no);
-//			if (selectedVideoIndex.contains(Integer.parseInt(index.getText().toString()))) {
-//				System.out.println("CONTAINS");
-//			}else {
-//				System.out.println("NOT CONTAINS");
-//			}
-//		}
-//		  
-//	}
+
 
 	public void downloadSelectedVideo(View vw) {
 		TextView sr = (TextView)vw.findViewById(R.id.sr_no);
-//		holder.srno = (TextView) vw.findViewById(R.id.sr_no);
-
-		System.out.println("downloadSelectedVideo");
-//		ImageAdapter ia=new ImageAdapter(null);
 		System.out.println("Position:"+sr.getText().toString());
 		downloadSingleVideo(v, download_video_array, Integer.parseInt(sr.getText().toString()) - 1);   
 	} 
@@ -1022,7 +964,7 @@ public class ContentSample extends Activity implements OnClickListener {
 					v = getLayoutInflater().inflate(R.layout.menu_row_category,
 							parent, false);
 				}
-
+				System.out.println("mTitle:"+((Category) item).mTitle);
 				((TextView) v).setText(((Category) item).mTitle);
 
 			} else {
@@ -1355,30 +1297,6 @@ public class ContentSample extends Activity implements OnClickListener {
 
 	}
 
-	
-
-	public void adapterFossListDetails(List<HashMap<String, String>> fillMaps,
-			String[] from, int[] to, final List<ArrayList<String>> event_row) {
-
-		mMenuDrawer.setContentView(R.layout.software_main); // set the main
-		// content view list
-		// row
-		foss_details_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get
-		// the
-		// list
-		// row
-		// id
-		SimpleAdapter adapter;
-
-		adapter = new SimpleAdapter(ContentSample.this, fillMaps,
-				R.layout.software_details_row, from, to);
-		foss_details_list_view.setAdapter(adapter);
-
-		LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
-		parent.setVisibility(View.GONE);
-		viewflag = false;
-
-	}
 
 	boolean single_video = false;
 
@@ -1427,49 +1345,61 @@ public class ContentSample extends Activity implements OnClickListener {
 		imagegrid.setAdapter(imageAdapter);
 		viewflag = true;
 	}
-	public void test(){
-System.out.println("heeelllloo");	}
 
 	private void displayFossListDetails(List<ArrayList<String>> event_row) {
-		final List<HashMap<String, String>> fillMaps;
-		String[] from;
-		int[] to;
-
-		from = new String[] { "srno", "fossname", "level", "language",
-				"tutorial", "imageid" };
-		to = new int[] { R.id.sr_no, R.id.soft_title, R.id.soft_level,
-				R.id.language, R.id.soft_link, R.id.right_image };
-		fillMaps = new ArrayList<HashMap<String, String>>();
-		// Toast.makeText(ContentSample.this, "Lisst:"+event_row,
-		// Toast.LENGTH_SHORT).show();
-		if (event_row.size() != 0) {
-			for (int i = 0; i < event_row.size(); i++) {
-				int count = i;
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("srno", "" + ++count);
-				map.put("fossname", "" + event_row.get(i).get(0)); // foss
-				// category
-				// name
-				map.put("level", "" + event_row.get(i).get(1)); // level like c2
-				// c3 ...
-				map.put("language", "" + event_row.get(i).get(2)); // selected
-				// language
-				// like
-				// English ,
-				// Hindi ...
-				map.put("tutorial", "" + event_row.get(i).get(3)); // Tutorial
-				// Name
-				// event_row.get(4); // link for video
-				map.put("imageid", "" + R.drawable.thump);
-				fillMaps.add(map);
-
-			}
-		} else {
-			Toast.makeText(ContentSample.this,
-					"Sorry!! No Tutorials are available", Toast.LENGTH_LONG)
-					.show();
-		}
-		adapterFossListDetails(fillMaps, from, to, event_row);
+				mMenuDrawer.setContentView(R.layout.software_main); // set the main
+		
+				this.count1 = event_row.size();
+				this.thumbnails = new Bitmap[this.count1];
+				this.arrPath = new String[this.count1];
+				this.thumbnailsselection = new boolean[this.count1];
+		// content view list
+				// row
+				foss_details_list_view = (ListView) findViewById(R.id.foss_cat_list_view); // get
+				imageAdapter = new ImageAdapter(event_row);
+				foss_details_list_view.setAdapter(imageAdapter);
+				LinearLayout parent = (LinearLayout) findViewById(R.id.load_screenshot_parent);
+				parent.setVisibility(View.GONE);
+				viewflag = false;
+//		final List<HashMap<String, String>> fillMaps;
+//		String[] from;
+//		int[] to;
+//
+//		from = new String[] { "srno", "fossname", "level", "language",
+//				"tutorial", "imageid" };
+//		to = new int[] { R.id.sr_no, R.id.soft_title, R.id.soft_level,
+//				R.id.language, R.id.soft_link, R.id.right_image };
+//		fillMaps = new ArrayList<HashMap<String, String>>();
+//		// Toast.makeText(ContentSample.this, "Lisst:"+event_row,
+//		// Toast.LENGTH_SHORT).show();
+//		if (event_row.size() != 0) {
+//			for (int i = 0; i < event_row.size(); i++) {
+//				int count = i;
+//				HashMap<String, String> map = new HashMap<String, String>();
+//				map.put("srno", "" + ++count);
+//				map.put("fossname", "" + event_row.get(i).get(0)); // foss
+//				// category
+//				// name
+//				map.put("level", "" + event_row.get(i).get(1)); // level like c2
+//				// c3 ...
+//				map.put("language", "" + event_row.get(i).get(2)); // selected
+//				// language
+//				// like
+//				// English ,
+//				// Hindi ...
+//				map.put("tutorial", "" + event_row.get(i).get(3)); // Tutorial
+//				// Name
+//				// event_row.get(4); // link for video
+//				map.put("imageid", "" + R.drawable.thump);
+//				fillMaps.add(map);
+//
+//			}
+//		} else {
+//			Toast.makeText(ContentSample.this,
+//					"Sorry!! No Tutorials are available", Toast.LENGTH_LONG)
+//					.show();
+//		}
+//		adapterFossListDetails(fillMaps, from, to, event_row);
 	}
 
 	@Override
@@ -1952,6 +1882,7 @@ System.out.println("heeelllloo");	}
 	public class ImageAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		List<ArrayList<String>> event_row1;
+		ContentSample cs=new ContentSample();
 
 
 		public ImageAdapter(List<ArrayList<String>> event_row) {
@@ -1977,17 +1908,26 @@ System.out.println("heeelllloo");	}
 
 			if (convertView == null) {
 				holder = new ViewHolder();
-				convertView = mInflater.inflate(
-						R.layout.software_details_grid_view, null);
+				if(cs.viewflag==false){
+					System.out.println("in false");
+					convertView = mInflater.inflate(
+							R.layout.software_details_row, null);
+					
+				}else {
+					System.out.println("in true");
+
+					convertView = mInflater.inflate(
+							R.layout.software_details_grid_view, null);
+				}
+			
 				holder.imageview = (ImageView) convertView.findViewById(R.id.right_image);
 				holder.checkbox = (CheckBox) convertView.findViewById(R.id.cbDownloadVideo);
 				holder.srno = (TextView) convertView.findViewById(R.id.sr_no);
 				holder.fossname = (TextView) convertView.findViewById(R.id.soft_title);
 				holder.tutorial = (TextView) convertView.findViewById(R.id.soft_link);
 				holder.language = (TextView) convertView.findViewById(R.id.language);
-				holder.language = (TextView) convertView.findViewById(R.id.language);
 
-				holder.grid_row = (LinearLayout) convertView.findViewById(R.id.grid_row);
+				holder.level = (TextView) convertView.findViewById(R.id.soft_level);
 
 
 				convertView.setTag(holder);
@@ -2020,11 +1960,21 @@ System.out.println("heeelllloo");	}
 			System.out.println("selections:"+thumbnailsselection[position]);
 			holder.srno.setText(String.valueOf(position+1));
 
-			holder.fossname.setText(event_row1.get(position).get(0));
-			holder.tutorial.setText(event_row1.get(position).get(3));
-			holder.language.setText(event_row1.get(position).get(1));
+			
+			if(cs.viewflag==false){
+				holder.fossname.setText(event_row1.get(position).get(0));
+				holder.tutorial.setText(event_row1.get(position).get(3));
+				holder.language.setText(event_row1.get(position).get(2));
+				holder.level.setText(event_row1.get(position).get(1));
+
+			}else {
+				holder.fossname.setText(event_row1.get(position).get(0));
+				holder.tutorial.setText(event_row1.get(position).get(3));
+				holder.language.setText(event_row1.get(position).get(1));
+			}
 
 			holder.id = position;
+			
 			
 			holder.checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				
@@ -2060,6 +2010,8 @@ System.out.println("heeelllloo");	}
 		TextView fossname;
 		TextView tutorial;
 		TextView language;
+		TextView level;
+
 		LinearLayout grid_row;
 		int id;
 	}
