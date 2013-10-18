@@ -600,7 +600,7 @@ public class ContentSample extends Activity implements OnClickListener {
 			menu.add(1,Menu.FIRST+2,Menu.FIRST+2,"Download selected videos");
 
 		} else {
-
+			
 			menu.add(1, Menu.FIRST, Menu.FIRST, "grid view");
 			menu.add(1,Menu.FIRST+1,Menu.FIRST+1,"Download all videos");
 			menu.add(1,Menu.FIRST+2,Menu.FIRST+2,"Download selected videos");
@@ -619,10 +619,12 @@ public class ContentSample extends Activity implements OnClickListener {
 		System.out.println("nem " + item.getGroupId());
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			mMenuDrawer.toggleMenu();
+			mMenuDrawer.toggleMenu(); 
 			return true;
 		case 1:
+			selectedVideoIndex.clear();
 			if (item.getTitle().equals("grid view")) {
+				
 				List<ArrayList<String>> eventlist = db.getTutorialList(foss_name,
 						language);
 				displayFossGridDetails(eventlist);
@@ -675,22 +677,7 @@ public class ContentSample extends Activity implements OnClickListener {
 	}
 
 	ArrayList<Integer> selectedVideoIndex = new ArrayList();
-	public void setCounter(View v) {
-		CheckBox cb = (CheckBox)v.findViewById(R.id.cbDownloadVideo);
-		TextView index = null;
-		if (cb.isChecked()) {
-			System.out.println(cb.getId());
-			//Toast.makeText(ContentSample.this, "checked"+cb.getId(), Toast.LENGTH_LONG).show();
-			
-			View parent = (View) cb.getParent();
-			index = (TextView)parent.findViewById(R.id.sr_no);
-			Toast.makeText(ContentSample.this, index.getText(), Toast.LENGTH_LONG).show();
-			selectedVideoIndex.add(Integer.parseInt(index.getText().toString()));
-			//setChecked();
-		}
-		//cb.setChecked(true);
-		System.out.println("INDEX "+selectedVideoIndex);
-	}
+
 	
 
 
@@ -1550,6 +1537,8 @@ public class ContentSample extends Activity implements OnClickListener {
 					+ " in " + "<b>" + language + "</b>" + " language."));
 			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			mProgressDialog.setCancelable(false);
+			mProgressDialog.setProgress(0);
+
 			mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
 					"Cancel", new DialogInterface.OnClickListener() {
 
@@ -1566,7 +1555,10 @@ public class ContentSample extends Activity implements OnClickListener {
 												DialogInterface dialog,
 												int id) {
 											running = false;
+											mProgressDialog.setProgress(0);
+
 											mProgressDialog.dismiss();
+											
 											Toast.makeText(ContentSample.this, "Downloading cancelled",
 													Toast.LENGTH_SHORT).show();
 											File file = new File(download_destination
@@ -1591,6 +1583,7 @@ public class ContentSample extends Activity implements OnClickListener {
 
 				}
 			});
+
 			mProgressDialog.show();
 			super.onPreExecute();
 		}
@@ -1912,12 +1905,15 @@ public class ContentSample extends Activity implements OnClickListener {
 					System.out.println("in false");
 					convertView = mInflater.inflate(
 							R.layout.software_details_row, null);
-					
+//					selectedVideoIndex.clear();
+
 				}else {
 					System.out.println("in true");
 
 					convertView = mInflater.inflate(
 							R.layout.software_details_grid_view, null);
+//					selectedVideoIndex.clear();
+
 				}
 			
 				holder.imageview = (ImageView) convertView.findViewById(R.id.right_image);
@@ -1981,6 +1977,7 @@ public class ContentSample extends Activity implements OnClickListener {
 				@Override
 				public void onCheckedChanged(CompoundButton arg0, boolean state) {
 					if(state == true){
+						
 						System.out.println("checked.......");
 						selectedVideoIndex.add(arg0.getId()+1);
 						System.out.println("Indexes1:"+selectedVideoIndex);
